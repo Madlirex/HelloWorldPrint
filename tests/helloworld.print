@@ -1,17 +1,3 @@
 import more.test
-číäôň
-Hello world("print")
-How are you? ("x=input")
-"I'm " + x + " too!"(print)
-What's your name? ("name = input")
-Nice to meet you {name}! (f"print")
 
-tkinter("tk = __import__")
-(root = tk.Tk)
-name(root.title)
-600x600("root.geometry")
-root, text=f"Hello World, {name}!", font=("Arial", 30, "bold")(text = tk.Label)
-root, text="This application was made using Print programming language.\nCreated Madlirex 2026.\nAll right reserved even tho it's just a Python ripoff", font=("Arial", 15), fg="gray"(subtitle = tk.Label)
-fill=tk.BOTH, expand=True(text.pack)
-fill=tk.BOTH, expand=True, side=tk.BOTTOM(subtitle.pack)
-(root.mainloop)
+print("hello")

@@ -84,7 +84,9 @@ class Compiler:
 
 
 def main() -> None:
-    Compiler.load_file(input("Path to root .print file: "))
+    file = input("Path to root .print file: ")
+    Compiler.load_file(file)
+    Compiler.run_code(Compiler.get_directory(file) + "bin/" + Compiler.get_basename(file) + ".py")
 
 if __name__ == "__main__":
     main()
