@@ -1,3 +1,6 @@
+from Lib.test.test_decimal import directory
+
+from parser import Parser
 import subprocess
 import sys
 import os
@@ -9,10 +12,40 @@ class Compiler:
     def load_file(path: str) -> None:
         file = Compiler.file_with_extension_exists(path, "print")
         if file:
-            with open(file, 'r') as f:
-                code = file.read()
+            Compiler.compile_code(file)
         else:
             Compiler.print_invalid_path(path, "print")
+
+    @staticmethod
+    def compile_code(path: str) -> None:
+        with open(path) as f:
+            code = f.read()
+            parsed_code = Parser.parse_code(code)
+        name = Compiler.get_basename(path) + ".py"
+        folder = Compiler.get_directory(path) + "bin/"
+        Compiler.create_dir(folder)
+        Compiler.create_file(folder + name)
+        with open(folder + name, 'w') as f:
+            f.write(code)
+
+    @staticmethod
+    def create_file(path: str) -> None:
+        if not os.path.exists(path):
+            open(path, 'x').close()
+
+    @staticmethod
+    def create_dir(path: str) -> None:
+        if not os.path.exists(path):
+            os.mkdir(path)
+
+    @staticmethod
+    def get_basename(path: str) -> str:
+        name = os.path.basename(path)
+        return os.path.splitext(name)[0]
+
+    @staticmethod
+    def get_directory(path: str) -> str:
+        return path.removesuffix(os.path.basename(path))
 
     @staticmethod
     def file_with_extension_exists(path: str, extension: str) -> str | None:
