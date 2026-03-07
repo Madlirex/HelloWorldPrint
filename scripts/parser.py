@@ -47,6 +47,7 @@ class Parser:
     is_string = False
     string_mode = ""
     is_comment = False
+    multiline_comment = 0
 
     @staticmethod
     def parse_code(code: str) -> tuple[str, list[str]]:
@@ -90,6 +91,10 @@ class Parser:
         indent = Parser.get_indent(line)
         line = line.lstrip(" ")
 
+        Parser.is_string = False
+        Parser.is_comment = Parser.multiline_comment == 3
+        Parser.string_mode = ""
+
         for char in line:
             Parser.evaluate_string(char)
 
@@ -103,6 +108,18 @@ class Parser:
         elif char == Parser.string_mode and Parser.is_string:
             Parser.is_string = False
             Parser.string_mode = ""
+
+    @staticmethod
+    def evaluate_comment(char: str) -> None:
+        if char == "#" and not Parser.is_string:
+            Parser.is_comment = True
+        elif char == "\"":
+            Parser.multiline_comment += 1
+        if Parser.multiline_comment == 3:
+            Parser.is_comment = True
+            Parser.is_string = False
+        elif Parser.multiline_comment > 3:
+            Parser.multiline_comment -= Parser.multiline_comment - 3
 
     @staticmethod
     def parse_keywords(line: str) -> str:
