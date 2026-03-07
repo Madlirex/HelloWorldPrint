@@ -44,6 +44,10 @@ class Parser:
         "skrátená funkcia, väčšinou anonymná a bez mena, používa sa pri krátkych operáciach alebo vo vnútri funkcií ako argument": "lambda"
     }
 
+    is_string = False
+    string_mode = ""
+    is_comment = False
+
     @staticmethod
     def parse_code(code: str) -> tuple[str, list[str]]:
         imported_files = []
@@ -86,9 +90,19 @@ class Parser:
         indent = Parser.get_indent(line)
         line = line.lstrip(" ")
 
-        line = Parser.parse_keywords(line)
+        for char in line:
+            Parser.evaluate_string(char)
 
         return " " * indent + line
+
+    @staticmethod
+    def evaluate_string(char: str) -> None:
+        if char == "\"" or char == "'" and not (Parser.is_string or Parser.is_comment):
+            Parser.is_string = True
+            Parser.string_mode = char
+        elif char == Parser.string_mode and Parser.is_string:
+            Parser.is_string = False
+            Parser.string_mode = ""
 
     @staticmethod
     def parse_keywords(line: str) -> str:
