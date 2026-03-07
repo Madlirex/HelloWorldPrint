@@ -12,14 +12,23 @@ class Compiler:
             with open(file, 'r') as f:
                 code = file.read()
         else:
-            print(f"Invalid path {path} to .print file.")
+            Compiler.print_invalid_path(path, "print")
 
     @staticmethod
     def file_with_extension_exists(path: str, extension: str) -> str | None:
-        extension = extension if extension.startswith(".") else f".{extension}"
+        extension = Compiler.format_extension(extension)
         if not path.endswith(extension):
             path += extension
         return path if os.path.exists(path) else None
+
+    @staticmethod
+    def format_extension(extension: str) -> str:
+        return extension if extension.startswith(".") else f".{extension}"
+
+    @staticmethod
+    def print_invalid_path(path: str, extension: str) -> None:
+        extension = Compiler.format_extension(extension)
+        print(f"Invalid path {path} to {extension} file.")
 
     @staticmethod
     def run_code(path: str) -> None:
@@ -27,7 +36,7 @@ class Compiler:
         if file:
             subprocess.run([sys.executable, file])
         else:
-            print(f"Invalid path {path} to .py file.")
+            Compiler.print_invalid_path(path, "py")
 
 
 def main() -> None:
