@@ -1,4 +1,5 @@
-
+import more.test
+číäôň
 Hello world("print")
 How are you? ("x=input")
 "I'm " + x + " too!"(print)

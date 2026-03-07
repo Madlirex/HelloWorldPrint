@@ -17,12 +17,19 @@ class Compiler:
             Compiler.print_invalid_path(path, "print")
 
     @staticmethod
-    def compile_code(path: str) -> None:
+    def compile_code(path: str, root: str = None) -> None:
+
         with open(path, encoding=Compiler.ENCODING) as f:
             code = f.read()
-            parsed_code = Parser.parse_code(code)
+            parsed_code, files = Parser.parse_code(code)
+
         name = Compiler.get_basename(path) + ".py"
-        folder = Compiler.get_directory(path) + "bin/"
+        root = Compiler.get_directory(path) if not root else root
+
+        for f in files:
+            Compiler.compile_code(f, root)
+
+        folder = Compiler.get_bin_directory(path, root)
         Compiler.create_dir(folder)
         Compiler.create_file(folder + name)
         with open(folder + name, 'w', encoding=Compiler.ENCODING) as f:
@@ -42,6 +49,10 @@ class Compiler:
     def get_basename(path: str) -> str:
         name = os.path.basename(path)
         return os.path.splitext(name)[0]
+
+    @staticmethod
+    def get_bin_directory(path: str, root: str) -> str:
+        return root + "bin/" + Compiler.get_directory(path).removeprefix(root)
 
     @staticmethod
     def get_directory(path: str) -> str:
