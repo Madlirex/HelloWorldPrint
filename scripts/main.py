@@ -1,3 +1,4 @@
+import locale
 from Lib.test.test_decimal import directory
 
 from parser import Parser
@@ -7,6 +8,8 @@ import os
 
 
 class Compiler:
+
+    ENCODING = "utf-8"
 
     @staticmethod
     def load_file(path: str) -> None:
@@ -18,20 +21,20 @@ class Compiler:
 
     @staticmethod
     def compile_code(path: str) -> None:
-        with open(path) as f:
+        with open(path, encoding=Compiler.ENCODING) as f:
             code = f.read()
             parsed_code = Parser.parse_code(code)
         name = Compiler.get_basename(path) + ".py"
         folder = Compiler.get_directory(path) + "bin/"
         Compiler.create_dir(folder)
         Compiler.create_file(folder + name)
-        with open(folder + name, 'w') as f:
+        with open(folder + name, 'w', encoding=Compiler.ENCODING) as f:
             f.write(code)
 
     @staticmethod
     def create_file(path: str) -> None:
         if not os.path.exists(path):
-            open(path, 'x').close()
+            open(path, 'x', encoding=Compiler.ENCODING).close()
 
     @staticmethod
     def create_dir(path: str) -> None:
@@ -73,7 +76,6 @@ class Compiler:
 
 
 def main() -> None:
-
     Compiler.load_file(input("Path to root .print file: "))
 
 if __name__ == "__main__":
