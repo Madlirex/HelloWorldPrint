@@ -29,6 +29,16 @@ class Parser:
             result += " " * to_indent + line.lstrip(" ") + "\n"
         return result
 
+    @staticmethod
+    def parse_expression(func: str, arg: str) -> str:
+        if func.startswith("f\""):
+            result = f"{func[2:-1]}(f\"{arg}\")"
+        elif func.startswith("\""):
+            result = f"{func[1:-1]}(\"{arg}\")"
+        else:
+            result = f"{func}({arg})"
+        return result
+
 if __name__ == "__main__":
     with open("parser_test.print", "r") as f:
         print(Parser.parse_code(f.read()))
