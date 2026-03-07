@@ -1,6 +1,3 @@
-import locale
-from Lib.test.test_decimal import directory
-
 from parser import Parser
 import subprocess
 import sys
