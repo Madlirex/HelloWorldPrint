@@ -92,6 +92,7 @@ class Parser:
 
     @staticmethod
     def parse_keywords(line: str) -> str:
+        print(line)
         for key in Parser.keywords:
             if line.startswith(key):
                 return Parser.keywords[key] + line.removeprefix(key)

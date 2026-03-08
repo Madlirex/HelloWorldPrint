@@ -1,3 +1,5 @@
-import more.test
 
-print("hello")
+
+čo ak
+nič x: x*x
+print(x)

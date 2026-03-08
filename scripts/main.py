@@ -33,7 +33,7 @@ class Compiler:
         Compiler.create_dir(folder)
         Compiler.create_file(folder + name)
         with open(folder + name, 'w', encoding=Compiler.ENCODING) as f:
-            f.write(code)
+            f.write(parsed_code)
 
     @staticmethod
     def create_file(path: str) -> None:
