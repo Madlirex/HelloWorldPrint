@@ -4,4 +4,10 @@ class Tokenizer:
 
     @staticmethod
     def tokenize(code: str) -> list[Token]:
-        pass
+
+        curr_token = Token()
+        curr_value = ""
+        result = []
+
+        for char in code:
+            pass
