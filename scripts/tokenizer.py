@@ -1,4 +1,7 @@
+from copy import deepcopy
+
 from token import Token, TokenType
+from position import PositionRange
 
 KEYWORDS = {
         "čo ak": "if",
@@ -50,7 +53,7 @@ class Tokenizer:
     result: list[Token] = []
     is_string = False
     is_comment = False
-    position: tuple[tuple[int, int], tuple[int, int]]
+    position: PositionRange = PositionRange()
 
     @staticmethod
     def tokenize(code: str) -> list[Token]:

@@ -1,5 +1,8 @@
 from enum import IntEnum
 
+from position import PositionRange
+
+
 class TokenType(IntEnum):
     UNKNOWN = -1
     INDENT = 0
@@ -18,19 +21,13 @@ class TokenType(IntEnum):
 
 class Token:
 
-    def __init__(self, token_type: TokenType = TokenType.UNKNOWN, value: str = "", pos: tuple[tuple[int, int], tuple[int, int]] = ((0, 0), (0, 0))) -> None:
+    def __init__(self, token_type: TokenType = TokenType.UNKNOWN, value: str = "", pos: PositionRange = PositionRange()) -> None:
 
         self.token_type: TokenType = token_type
         self.value: str = value
         self.int_value: int = 0
-        self.position: tuple[tuple[int, int], tuple[int, int]] = pos
+        self.position: PositionRange = pos
 
     def add_to_value(self, value: str) -> None:
         self.value += value
-        self.position = self.position[0], (self.position[1][0] + 1, self.position[1][1])
-
-    def translate_start_pos(self, x: int, y: int) -> None:
-        self.position = (self.position[0][0] + x, self.position[0][1] + y), self.position[1]
-
-    def translate_end_pos(self, x: int, y: int) -> None:
-        self.position = self.position[0], (self.position[1][0] + x, self.position[1][1] + y)
+        self.position.end.translate(1)
