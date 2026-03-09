@@ -1,17 +1,22 @@
-from enum import Enum
+from enum import IntEnum
 
-class TokenType(Enum):
+class TokenType(IntEnum):
+    UNKNOWN = -1
     INDENT = 0
-    KEYWORD = 1
-    OPERATION = 2
-    ARGUMENT = 3
-    FUNCTION = 4
-    KEYWORD_LINE_END = 5
-    NEW_LINE = 6
+    NEW_LINE = 1
+    KEYWORD_LINE_END = 2
+    KEYWORD = 3
+    OPERATION = 4
+    ARGUMENT = 5
+    FUNCTION = 6
+
+    @property
+    def is_indent_next(self) -> bool:
+        return self in {TokenType.UNKNOWN, TokenType.INDENT, TokenType.NEW_LINE}
 
 class Token:
 
-    def __init__(self, token_type: TokenType, value: str = "", pos: tuple[tuple[int, int], tuple[int, int]] = ((0, 0), (0, 0))) -> None:
+    def __init__(self, token_type: TokenType = TokenType.UNKNOWN, value: str = "", pos: tuple[tuple[int, int], tuple[int, int]] = ((0, 0), (0, 0))) -> None:
 
         self.token_type: TokenType = token_type
         self.value: str = value
