@@ -9,6 +9,8 @@ class TokenType(IntEnum):
     OPERATION = 4
     ARGUMENT = 5
     FUNCTION = 6
+    COMMENT = 7
+    VALUE = 8
 
     @property
     def is_indent_next(self) -> bool:
@@ -20,10 +22,11 @@ class Token:
 
         self.token_type: TokenType = token_type
         self.value: str = value
+        self.int_value: int = 0
         self.position: tuple[tuple[int, int], tuple[int, int]] = pos
 
-    def add_to_value(self, x: str) -> None:
-        self.value += x
+    def add_to_value(self, value: str) -> None:
+        self.value += value
         self.position = self.position[0], (self.position[1][0] + 1, self.position[1][1])
 
     def translate_start_pos(self, x: int, y: int) -> None:
