@@ -17,7 +17,7 @@ class TokenType(IntEnum):
 
     @property
     def is_indent_next(self) -> bool:
-        return self in {TokenType.UNKNOWN, TokenType.INDENT, TokenType.NEW_LINE}
+        return self in {TokenType.INDENT, TokenType.NEW_LINE}
 
 class Token:
 

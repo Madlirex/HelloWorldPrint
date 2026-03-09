@@ -1,5 +1,5 @@
 
 
-čo ak
-nič x: x*x
+    čo ak
+   ,nič x: x*x
 print(x)

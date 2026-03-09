@@ -59,11 +59,18 @@ class Tokenizer:
     def tokenize(code: str) -> list[Token]:
 
         curr_token = Token(token_type=TokenType.INDENT)
-        result: list[Token] = [curr_token]
+        result: list[Token] = Tokenizer.result
 
         for char in code:
             if char == " ":
                 Tokenizer.tokenize_space()
+            elif char == "\n":
+                Tokenizer.result.append(Tokenizer.curr_token)
+                Tokenizer.curr_token = Token(token_type=TokenType.NEW_LINE)
+                #Tokenizer.curr_token.add_to_value(char)
+            elif char == ",":
+                Tokenizer.curr_token.token_type = TokenType.ARGUMENT
+                Tokenizer.curr_token.add_to_value(char)
             else:
                 Tokenizer.curr_token.add_to_value(char)
 
@@ -73,17 +80,14 @@ class Tokenizer:
     @staticmethod
     def tokenize_space() -> None:
 
-        if Tokenizer.result[-1].token_type.is_indent_next:
+        if Tokenizer.curr_token.token_type.is_indent_next:
             if Tokenizer.curr_token.token_type == TokenType.INDENT:
                 Tokenizer.curr_token.int_value += 1
             else:
                 Tokenizer.result.append(Tokenizer.curr_token)
                 Tokenizer.curr_token = Token(TokenType.INDENT)
 
-        elif Tokenizer.is_string:
-            Tokenizer.curr_token.add_to_value(" ")
-
-        elif Tokenizer.is_comment:
+        elif Tokenizer.is_string or Tokenizer.is_comment:
             Tokenizer.curr_token.add_to_value(" ")
 
         elif Tokenizer.curr_token.token_type == TokenType.KEYWORD:
@@ -97,7 +101,13 @@ class Tokenizer:
             if Tokenizer.curr_token.value in KEYWORDS:
                 Tokenizer.curr_token.value = KEYWORDS[Tokenizer.curr_token.value]
                 Tokenizer.curr_token.token_type = TokenType.KEYWORD
+                Tokenizer.result.append(Tokenizer.curr_token)
+                Tokenizer.curr_token = Token()
             else:
                 Tokenizer.curr_token.token_type = TokenType.VALUE
                 Tokenizer.result.append(Tokenizer.curr_token)
                 Tokenizer.curr_token = Token()
+data = open("../tests/helloworld.print", 'r', encoding='utf-8').read()
+print(data)
+for token in Tokenizer.tokenize(data):
+    print(token.token_type.name, token.value, token.int_value)
