@@ -14,10 +14,16 @@ class TokenType(IntEnum):
     FUNCTION = 6
     COMMENT = 7
     VALUE = 8
+    BRACKET_OPEN = 9
+    BRACKET_CLOSE = 10
 
     @property
     def is_indent_next(self) -> bool:
         return self in {TokenType.INDENT, TokenType.NEW_LINE}
+
+    @property
+    def is_function_bracket(self) -> bool:
+        return self in {TokenType.BRACKET_OPEN, TokenType.BRACKET_CLOSE}
 
 class Token:
 
