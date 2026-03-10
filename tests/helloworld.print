@@ -1,5 +1,8 @@
+input()(int)=x
 
-
-    čo ak
-   ,nič x: x*x
-print(x)
+    čo ak x sa rovná 3?
+Dal si 3("print")
+    ibaže x sa rovná 0!
+Nesprávne("print")
+    inak.
+Hmm nevem, dal si {x}(f"print")

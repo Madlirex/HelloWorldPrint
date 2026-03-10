@@ -63,9 +63,7 @@ class Tokenizer:
             if char == " ":
                 Tokenizer.tokenize_space()
             elif char == "\n":
-                Tokenizer.result.append(Tokenizer.curr_token)
-                Tokenizer.curr_token = Token(token_type=TokenType.NEW_LINE)
-                #Tokenizer.curr_token.add_to_value(char)
+                Tokenizer.tokenize_end_line()
             elif char == ",":
                 Tokenizer.curr_token.token_type = TokenType.ARGUMENT
                 Tokenizer.curr_token.add_to_value(char)
@@ -73,6 +71,17 @@ class Tokenizer:
                 Tokenizer.curr_token.add_to_value(char)
 
         return result
+
+    @staticmethod
+    def tokenize_end_line() -> None:
+        Tokenizer.result.append(Tokenizer.curr_token)
+
+        if Tokenizer.curr_token.value.endswith(("!", "?", ".")):
+            char = Tokenizer.curr_token.remove_from_value(1)
+            Tokenizer.result.append(Token(token_type=TokenType.KEYWORD_LINE_END, value=char))
+
+        Tokenizer.curr_token = Token(token_type=TokenType.NEW_LINE, value="\n")
+
 
     # run away as fast as you can
     @staticmethod

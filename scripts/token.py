@@ -31,3 +31,9 @@ class Token:
     def add_to_value(self, value: str) -> None:
         self.value += value
         self.position.end.translate(1)
+    def remove_from_value(self, amount: int) -> str:
+        result = self.value[-amount:]
+        self.value = self.value[:-amount]
+        self.position.end.translate(-1)
+        return result
+
