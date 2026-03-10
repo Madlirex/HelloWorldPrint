@@ -47,8 +47,49 @@ KEYWORDS = {
 
 class Tokenizer:
 
+    def __init__(self) -> None:
+
+        self.result: list[Token] = []
+        self.is_comment = False
+        self.is_multi_comment = False
+        self.multi_comment_counter = 0
+        self.is_string = False
+        self.curr_token: Token = Token(token_type=TokenType.UNKNOWN)
+        self.curr_line: list[Token] = []
+
+    def tokenize(self, code: str) -> list[Token]:
+
+        for char in code:
+            pass
+
+        return self.result
+
+    def add_token(self, t: Token) -> None:
+        pass
+
+    def tokenize_space(self, char: str) -> None:
+        pass
+
+    def tokenize_quotes(self, char: str) -> None:
+        pass
+
+    def tokenize_new_line(self, char: str) -> None:
+        pass
+
+    def tokenize_operation(self, char: str) -> None:
+        pass
+
+    def tokenize_bracket(self, char: str) -> None:
+        pass
+
+    def tokenize_unknowns(self, tokens: list[Token]) -> None:
+        pass
+
+    def get_latest_unknowns(self) -> list[Token]:
+        pass
+
     @staticmethod
-    def tokenize(code: str) -> list[Token]:
+    def join_values(tokens: list[Token]) -> str:
         pass
 
 data = open("../tests/helloworld.print", 'r', encoding='utf-8').read()
