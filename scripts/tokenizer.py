@@ -1,5 +1,3 @@
-from copy import deepcopy
-
 from token import Token, TokenType
 from position import PositionRange
 
