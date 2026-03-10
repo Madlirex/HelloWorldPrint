@@ -45,54 +45,23 @@ KEYWORDS = {
         "skrátená funkcia, väčšinou anonymná a bez mena, používa sa pri krátkych operáciach alebo vo vnútri funkcií ako argument": "lambda"
     }
 
+BRACKETS = {
+    "(": TokenType.LPAREN,
+    ")": TokenType.RPAREN,
+    "[": TokenType.LBRACKET,
+    "]": TokenType.RBRACKET,
+    "{": TokenType.LBRACE,
+    "}": TokenType.RBRACE,
+}
+
+
 class Tokenizer:
 
     def __init__(self) -> None:
-
-        self.result: list[Token] = []
-        self.is_comment = False
-        self.is_multi_comment = False
-        self.multi_comment_counter = 0
-        self.is_string = False
-        self.curr_token: Token = Token(token_type=TokenType.UNKNOWN)
-        self.curr_line: list[Token] = []
-
-    def tokenize(self, code: str) -> list[Token]:
-
-        for char in code:
-            pass
-
-        return self.result
-
-    def add_token(self, t: Token) -> None:
         pass
 
-    def tokenize_space(self, char: str) -> None:
-        pass
-
-    def tokenize_quotes(self, char: str) -> None:
-        pass
-
-    def tokenize_new_line(self, char: str) -> None:
-        pass
-
-    def tokenize_operation(self, char: str) -> None:
-        pass
-
-    def tokenize_bracket(self, char: str) -> None:
-        pass
-
-    def tokenize_unknowns(self, tokens: list[Token]) -> None:
-        pass
-
-    def get_latest_unknowns(self) -> list[Token]:
-        pass
-
-    @staticmethod
-    def join_values(tokens: list[Token]) -> str:
-        pass
 
 data = open("../tests/helloworld.print", 'r', encoding='utf-8').read()
-
-for token in Tokenizer.tokenize(data):
-    print(token.token_type.name, token.value, token.int_value)
+tokenizer = Tokenizer()
+for token in tokenizer.tokenize(data):
+    print(token.token_type.name, token.value if token.token_type != TokenType.NEW_LINE else "", token.int_value if token.token_type == TokenType.INDENT else "")

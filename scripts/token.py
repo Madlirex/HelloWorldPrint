@@ -4,26 +4,48 @@ from position import PositionRange
 
 
 class TokenType(IntEnum):
-    UNKNOWN = -1
-    INDENT = 0
-    NEW_LINE = 1
-    KEYWORD_LINE_END = 2
-    KEYWORD = 3
-    OPERATION = 4
-    ARGUMENT = 5
-    FUNCTION = 6
-    COMMENT = 7
-    VALUE = 8
-    BRACKET_OPEN = 9
-    BRACKET_CLOSE = 10
+
+    VALUE = 0
+
+    OPERATION = 1
+
+    KEYWORD = 2
+
+    LPAREN = 3
+    RPAREN = 4
+    LBRACKET = 5
+    RBRACKET = 6
+    LBRACE = 7
+    RBRACE = 8
+    COMMA = 9
+    COLON = 10
+
+    NEWLINE = 11
+    INDENT = 12
+    COMMENT = 13
+
+    FUNCTION = 14
+
+    UNKNOWN = 15
 
     @property
-    def is_indent_next(self) -> bool:
-        return self in {TokenType.INDENT, TokenType.NEW_LINE}
+    def is_bracket(self):
+        return self in {
+            TokenType.LPAREN, TokenType.RPAREN,
+            TokenType.LBRACKET, TokenType.RBRACKET,
+            TokenType.LBRACE, TokenType.RBRACE
+        }
 
     @property
-    def is_function_bracket(self) -> bool:
-        return self in {TokenType.BRACKET_OPEN, TokenType.BRACKET_CLOSE}
+    def is_structural(self):
+        return self in {
+            TokenType.LPAREN, TokenType.RPAREN,
+            TokenType.LBRACKET, TokenType.RBRACKET,
+            TokenType.LBRACE, TokenType.RBRACE,
+            TokenType.COMMA, TokenType.COLON,
+            TokenType.NEWLINE, TokenType.INDENT
+        }
+
 
 class Token:
 
@@ -31,12 +53,12 @@ class Token:
 
         self.token_type: TokenType = token_type
         self.value: str = value
-        self.int_value: int = 0
         self.position: PositionRange = pos
 
     def add_to_value(self, value: str) -> None:
         self.value += value
         self.position.end.translate(1)
+
     def remove_from_value(self, amount: int) -> str:
         result = self.value[-amount:]
         self.value = self.value[:-amount]
