@@ -1,4 +1,4 @@
-input()(int)=x
+input()(int) = x
 
     čo ak x sa rovná 3?
 Dal si 3("print")

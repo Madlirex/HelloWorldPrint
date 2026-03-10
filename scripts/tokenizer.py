@@ -52,6 +52,7 @@ class Tokenizer:
     is_string = False
     is_comment = False
     position: PositionRange = PositionRange()
+    curr_line: list[Token] = []
 
     @staticmethod
     def tokenize(code: str) -> list[Token]:
@@ -67,10 +68,36 @@ class Tokenizer:
             elif char == ",":
                 Tokenizer.curr_token.token_type = TokenType.ARGUMENT
                 Tokenizer.curr_token.add_to_value(char)
+            elif char == "=":
+                Tokenizer.add_token(Tokenizer.curr_token)
+                Tokenizer.add_token(Token(token_type=TokenType.OPERATION, value="="))
+                Tokenizer.curr_token = Token(token_type=TokenType.VALUE)
+            elif Tokenizer.curr_token.token_type.is_indent_next:
+                Tokenizer.add_token(Tokenizer.curr_token)
+                Tokenizer.curr_token = Token(token_type=TokenType.UNKNOWN, value=char)
             else:
                 Tokenizer.curr_token.add_to_value(char)
 
         return result
+
+    @staticmethod
+    def get_latest_unknowns() -> list[Token]:
+        result = []
+        for t in Tokenizer.curr_line:
+            if t.token_type == TokenType.UNKNOWN:
+                result.append(t)
+            else:
+                result = []
+        return result
+
+    @staticmethod
+    def join_values(t: list[Token]) -> str:
+        return " ".join(i.value for i in t)
+
+    @staticmethod
+    def add_token(t: Token) -> None:
+        Tokenizer.result.append(t)
+        Tokenizer.curr_line.append(t)
 
     @staticmethod
     def tokenize_end_line() -> None:
@@ -78,9 +105,10 @@ class Tokenizer:
 
         if Tokenizer.curr_token.value.endswith(("!", "?", ".")):
             char = Tokenizer.curr_token.remove_from_value(1)
-            Tokenizer.result.append(Token(token_type=TokenType.KEYWORD_LINE_END, value=char))
+            Tokenizer.add_token(Token(token_type=TokenType.KEYWORD_LINE_END, value=char))
 
         Tokenizer.curr_token = Token(token_type=TokenType.NEW_LINE, value="\n")
+        Tokenizer.curr_line = []
 
 
     # run away as fast as you can
@@ -91,14 +119,14 @@ class Tokenizer:
             if Tokenizer.curr_token.token_type == TokenType.INDENT:
                 Tokenizer.curr_token.int_value += 1
             else:
-                Tokenizer.result.append(Tokenizer.curr_token)
+                Tokenizer.add_token(Tokenizer.curr_token)
                 Tokenizer.curr_token = Token(TokenType.INDENT)
 
         elif Tokenizer.is_string or Tokenizer.is_comment:
             Tokenizer.curr_token.add_to_value(" ")
 
         elif Tokenizer.curr_token.token_type == TokenType.KEYWORD:
-            Tokenizer.result.append(Tokenizer.curr_token)
+            Tokenizer.add_token(Tokenizer.curr_token)
             Tokenizer.curr_token = Token()
 
         elif Tokenizer.curr_token.token_type == TokenType.ARGUMENT:
@@ -106,15 +134,14 @@ class Tokenizer:
 
         elif Tokenizer.curr_token.token_type == TokenType.UNKNOWN:
             if Tokenizer.curr_token.value in KEYWORDS:
-                Tokenizer.curr_token.value = KEYWORDS[Tokenizer.curr_token.value]
                 Tokenizer.curr_token.token_type = TokenType.KEYWORD
-                Tokenizer.result.append(Tokenizer.curr_token)
+                Tokenizer.add_token(Tokenizer.curr_token)
                 Tokenizer.curr_token = Token()
             else:
                 Tokenizer.curr_token.token_type = TokenType.VALUE
-                Tokenizer.result.append(Tokenizer.curr_token)
+                Tokenizer.add_token(Tokenizer.curr_token)
                 Tokenizer.curr_token = Token()
 data = open("../tests/helloworld.print", 'r', encoding='utf-8').read()
-print(data)
+
 for token in Tokenizer.tokenize(data):
     print(token.token_type.name, token.value, token.int_value)
