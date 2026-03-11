@@ -12,3 +12,6 @@ Multiline
 #comment
 "ha
 """
+
+'test"'
+"test'":

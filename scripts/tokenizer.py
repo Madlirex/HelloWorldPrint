@@ -3,25 +3,25 @@ from constants import BRACKETS
 
 class Tokenizer:
 
-    def __init__(self, code):
-        self.code = code
-        self.pos = 0
-        self.tokens = []
-        self.curr_quotes = ''
+    def __init__(self, code: str) -> None:
+        self.code: str = code
+        self.pos: int = 0
+        self.tokens: list[Token] = []
+        self.curr_quotes: str = ''
 
-    def peek(self, x: int = 0):
+    def peek(self, x: int = 0) -> str | None:
         if self.pos + x >= len(self.code):
             return None
         return self.code[self.pos + x]
 
-    def advance(self):
+    def advance(self) -> str:
         if self.pos >= len(self.code):
             return ""
         char = self.code[self.pos]
         self.pos += 1
         return char
 
-    def tokenize(self):
+    def tokenize(self) -> list[Token]:
 
         while self.pos < len(self.code):
 
@@ -39,7 +39,7 @@ class Tokenizer:
                 self.tokens.append(self.read_identifier())
                 continue
 
-            if char == '"':
+            if char == '"' or char == "'":
                 self.tokens.append(self.read_string())
                 continue
 
@@ -73,6 +73,11 @@ class Tokenizer:
                 self.advance()
                 continue
 
+            if char == ":":
+                self.tokens.append(Token(TokenType.COLON, char))
+                self.advance()
+                continue
+
             if char == "#":
                 self.tokens.append(self.read_comment())
                 continue
@@ -82,7 +87,7 @@ class Tokenizer:
         self.tokens.append(Token(TokenType.EOF))
         return self.tokens
 
-    def read_comment(self):
+    def read_comment(self) -> Token:
 
         value = ""
         while self.peek() != "\n" and self.peek():
@@ -90,7 +95,7 @@ class Tokenizer:
 
         return Token(TokenType.COMMENT, value)
 
-    def read_number(self):
+    def read_number(self) -> Token:
 
         num = ""
 
@@ -99,7 +104,7 @@ class Tokenizer:
 
         return Token(TokenType.NUMBER, int(num))
 
-    def read_identifier(self):
+    def read_identifier(self) -> Token:
 
         name = ""
 
@@ -108,7 +113,7 @@ class Tokenizer:
 
         return Token(TokenType.VALUE, name)
 
-    def read_multi_comment(self):
+    def read_multi_comment(self) -> Token:
 
         value = self.advance()
         quote_count = 0
@@ -119,7 +124,7 @@ class Tokenizer:
 
         return Token(TokenType.COMMENT, value)
 
-    def read_string(self):
+    def read_string(self) -> Token:
 
         value = self.peek()
         self.curr_quotes = value
