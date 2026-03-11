@@ -140,7 +140,8 @@ class Tokenizer:
 
         return Token(TokenType.STRING, value)
 
-data = open("../tests/helloworld.print", 'r', encoding='utf-8').read()
-tokenizer = Tokenizer(data)
-for token in tokenizer.tokenize():
-    print(token)
+if __name__ == "__main__":
+    data = open("../tests/helloworld.print", 'r', encoding='utf-8').read()
+    tokenizer = Tokenizer(data)
+    for token in tokenizer.tokenize():
+        print(token)
