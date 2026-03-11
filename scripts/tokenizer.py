@@ -23,6 +23,8 @@ class Tokenizer:
 
     def tokenize(self) -> list[Token]:
 
+        self.tokens.append(self.read_indent())
+
         while self.pos < len(self.code):
 
             char = self.peek()

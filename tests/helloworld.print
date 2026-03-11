@@ -1,4 +1,4 @@
-input()(int) = x
+(input)(int) = x
     "# ahoj"
     čo ak x sa rovná 3? # a co take tu mam dat
 Dal si 3("print")
