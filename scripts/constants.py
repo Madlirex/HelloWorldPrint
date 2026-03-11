@@ -1,3 +1,5 @@
+from token import TokenType
+
 KEYWORDS = {
         ("čo", "ak"): "if",
         ("ibaže",): "elif",
@@ -42,4 +44,11 @@ KEYWORDS = {
         ("skrátená", "funkcia,", "väčšinou", "anonymná", "a", "bez", "mena,", "používa", "sa", "pri", "krátkych", "operáciach", "alebo", "vo", "vnútri", "funkcií", "ako", "argument"): "lambda"
 }
 
-
+BRACKETS = {
+    "(": TokenType.LPAREN,
+    ")": TokenType.RPAREN,
+    "[": TokenType.LBRACKET,
+    "]": TokenType.RBRACKET,
+    "{": TokenType.LBRACE,
+    "}": TokenType.RBRACE,
+}

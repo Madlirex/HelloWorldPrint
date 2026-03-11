@@ -1,67 +1,141 @@
 from token import Token, TokenType
-from position import PositionRange
-
-KEYWORDS = {
-        "čo ak": "if",
-        "ibaže": "elif",
-        "inak": "else",
-        "kým platí, že": "while",
-        "pre každé": "for",
-        "trieda": "class",
-        "definuje": "def",
-        "skús": "try",
-        "okrem": "except",
-        "na koniec": "finally",
-        "in": "v",
-        "sa rovná": "==",
-        "je menšie ako": "<",
-        "je väčšie ako": ">",
-        "je menšie alebo rovné ako": "<=",
-        "je väčšie alebo rovné ako": ">=",
-        "sa nerovná": "!=",
-        "neplatí": "not",
-        "alebo": "or",
-        "a": "and",
-        "je": "is",
-        "definuj": "def",
-        "zmaž": "del",
-        "vráť": "return",
-        "výnos": "yield",
-        "ako": "as",
-        "importuj": "import",
-        "z": "from",
-        "zlom": "break",
-        "pokračuj": "pass",
-        "preskoč": "continue",
-        "klamstvo": "False",
-        "pravda": "True",
-        "nič": "None",
-        "verejné": "global",
-        "nelokálna": "nonlocal",
-        "využi": "with",
-        "porovnaj": "match",
-        "v prípade, že": "case",
-        "vyvráť": "raise",
-        "skrátená funkcia, väčšinou anonymná a bez mena, používa sa pri krátkych operáciach alebo vo vnútri funkcií ako argument": "lambda"
-    }
-
-BRACKETS = {
-    "(": TokenType.LPAREN,
-    ")": TokenType.RPAREN,
-    "[": TokenType.LBRACKET,
-    "]": TokenType.RBRACKET,
-    "{": TokenType.LBRACE,
-    "}": TokenType.RBRACE,
-}
-
+from constants import BRACKETS
 
 class Tokenizer:
 
-    def __init__(self) -> None:
-        pass
+    def __init__(self, code):
+        self.code = code
+        self.pos = 0
+        self.tokens = []
+        self.curr_quotes = ''
 
+    def peek(self, x: int = 0):
+        if self.pos + x >= len(self.code):
+            return None
+        return self.code[self.pos + x]
+
+    def advance(self):
+        if self.pos >= len(self.code):
+            return ""
+        char = self.code[self.pos]
+        self.pos += 1
+        return char
+
+    def tokenize(self):
+
+        while self.pos < len(self.code):
+
+            char = self.peek()
+
+            if char.isspace():
+                self.advance()
+                continue
+
+            if char.isdigit():
+                self.tokens.append(self.read_number())
+                continue
+
+            if char.isalpha() or char == "_":
+                self.tokens.append(self.read_identifier())
+                continue
+
+            if char == '"':
+                self.tokens.append(self.read_string())
+                continue
+
+            if char == ".":
+                self.tokens.append(Token(TokenType.DOT, char))
+                self.advance()
+                continue
+
+            if char == "=":
+                self.tokens.append(Token(TokenType.OPERATION, char))
+                self.advance()
+                continue
+
+            if char == ",":
+                self.tokens.append(Token(TokenType.COMMA, char))
+                self.advance()
+                continue
+
+            if char in BRACKETS:
+                self.tokens.append(Token(BRACKETS[char], char))
+                self.advance()
+                continue
+
+            if char == "?":
+                self.tokens.append(Token(TokenType.QUESTION, char))
+                self.advance()
+                continue
+
+            if char == "!":
+                self.tokens.append(Token(TokenType.EXCLAMAITON, char))
+                self.advance()
+                continue
+
+            if char == "#":
+                self.tokens.append(self.read_comment())
+                continue
+
+            raise Exception(f"Unknown char {char}")
+
+        self.tokens.append(Token(TokenType.EOF))
+        return self.tokens
+
+    def read_comment(self):
+
+        value = ""
+        while self.peek() != "\n" and self.peek():
+            value += self.advance()
+
+        return Token(TokenType.COMMENT, value)
+
+    def read_number(self):
+
+        num = ""
+
+        while self.peek() and self.peek().isdigit():
+            num += self.advance()
+
+        return Token(TokenType.NUMBER, int(num))
+
+    def read_identifier(self):
+
+        name = ""
+
+        while self.peek() and (self.peek().isalnum() or self.peek() == "_"):
+            name += self.advance()
+
+        return Token(TokenType.VALUE, name)
+
+    def read_multi_comment(self):
+
+        value = self.advance()
+        quote_count = 0
+
+        while quote_count < 3:
+            value += self.advance()
+            quote_count = quote_count + 1 if value[-1] == '"' else 0
+
+        return Token(TokenType.COMMENT, value)
+
+    def read_string(self):
+
+        value = self.peek()
+        self.curr_quotes = value
+
+        if self.peek() == self.peek(1) and self.peek() == value and value == '"':
+            return self.read_multi_comment()
+
+        value = self.advance()
+        while self.peek() != self.curr_quotes:
+            value += self.advance()
+
+        value += self.advance()
+
+        return Token(TokenType.STRING, value)
 
 data = open("../tests/helloworld.print", 'r', encoding='utf-8').read()
-tokenizer = Tokenizer()
-for token in tokenizer.tokenize(data):
-    print(token.token_type.name, token.value if token.token_type != TokenType.NEW_LINE else "", token.int_value if token.token_type == TokenType.INDENT else "")
+tokenizer = Tokenizer(data)
+for token in tokenizer.tokenize():
+    print(token)

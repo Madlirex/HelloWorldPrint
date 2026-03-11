@@ -1,32 +1,30 @@
-from enum import IntEnum
-
-from position import PositionRange
+from enum import Enum, auto
 
 
-class TokenType(IntEnum):
+class TokenType(Enum):
+    VALUE = auto()
+    OPERATION = auto()
+    STRING = auto()
+    NUMBER = auto()
+    COMMENT = auto()
 
-    VALUE = 0
+    QUESTION = auto()
+    EXCLAMAITON = auto()
+    DOT = auto()
+    COMMA = auto()
+    COLON = auto()
 
-    EQUAL = 1
+    INDENT = auto()
+    NEWLINE = auto()
 
-    KEYWORD = 2
+    LPAREN = auto()
+    RPAREN = auto()
+    LBRACKET = auto()
+    RBRACKET = auto()
+    LBRACE = auto()
+    RBRACE = auto()
+    EOF = auto()
 
-    LPAREN = 3
-    RPAREN = 4
-    LBRACKET = 5
-    RBRACKET = 6
-    LBRACE = 7
-    RBRACE = 8
-    COMMA = 9
-    COLON = 10
-
-    NEWLINE = 11
-    INDENT = 12
-    COMMENT = 13
-
-    FUNCTION = 14
-
-    UNKNOWN = 15
 
     @property
     def is_bracket(self):
@@ -49,19 +47,10 @@ class TokenType(IntEnum):
 
 class Token:
 
-    def __init__(self, token_type: TokenType = TokenType.UNKNOWN, value: str = "", pos: PositionRange = PositionRange()) -> None:
-
+    def __init__(self, token_type: TokenType, value: str | int =""):
         self.token_type: TokenType = token_type
-        self.value: str = value
-        self.position: PositionRange = pos
+        self.value: str | int = value
 
-    def add_to_value(self, value: str) -> None:
-        self.value += value
-        self.position.end.translate(1)
-
-    def remove_from_value(self, amount: int) -> str:
-        result = self.value[-amount:]
-        self.value = self.value[:-amount]
-        self.position.end.translate(-1)
-        return result
+    def __repr__(self):
+        return f"{self.token_type.name}: {self.value}"
 

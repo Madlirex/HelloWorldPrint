@@ -1,8 +1,14 @@
 input()(int) = x
-
+    "# ahoj"
     čo ak x sa rovná 3? # a co take tu mam dat
 Dal si 3("print")
     ibaže x sa rovná 0!
 Nesprávne("print")
     inak.
 Hmm nevem, dal si {x}(f"print")
+(){}[]
+"""
+Multiline
+#comment
+"ha
+"""
