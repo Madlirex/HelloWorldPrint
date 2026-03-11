@@ -7,7 +7,7 @@ class TokenType(IntEnum):
 
     VALUE = 0
 
-    OPERATION = 1
+    EQUAL = 1
 
     KEYWORD = 2
 
