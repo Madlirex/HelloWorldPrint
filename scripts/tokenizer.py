@@ -26,6 +26,11 @@ class Tokenizer:
         while self.pos < len(self.code):
 
             char = self.peek()
+            print(char)
+            if char == "\n":
+                self.tokens.append(self.read_new_line())
+                self.tokens.append(self.read_indent())
+                continue
 
             if char.isspace():
                 self.advance()
@@ -87,6 +92,19 @@ class Tokenizer:
         self.tokens.append(Token(TokenType.EOF))
         return self.tokens
 
+    def read_new_line(self) -> Token:
+        return Token(TokenType.NEWLINE, self.advance())
+
+    def read_indent(self) -> Token:
+
+        value = 0
+
+        while self.peek() == " ":
+            value += 1
+            self.advance()
+
+        return Token(TokenType.INDENT, value)
+
     def read_comment(self) -> Token:
 
         value = ""
@@ -127,14 +145,19 @@ class Tokenizer:
     def read_string(self) -> Token:
 
         value = self.peek()
-        self.curr_quotes = value
 
         if self.peek() == self.peek(1) and self.peek() == value and value == '"':
             return self.read_multi_comment()
 
         value = self.advance()
+        self.curr_quotes = value
+
         while self.peek() != self.curr_quotes:
             value += self.advance()
+            print(value)
+            print(self.curr_quotes)
+
+        print(value)
 
         value += self.advance()
 
