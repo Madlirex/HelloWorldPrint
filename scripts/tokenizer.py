@@ -26,7 +26,6 @@ class Tokenizer:
         while self.pos < len(self.code):
 
             char = self.peek()
-            print(char)
             if char == "\n":
                 self.tokens.append(self.read_new_line())
                 self.tokens.append(self.read_indent())
