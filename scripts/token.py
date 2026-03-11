@@ -3,7 +3,7 @@ from enum import Enum, auto
 
 class TokenType(Enum):
     VALUE = auto()
-    OPERATION = auto()
+    EQUAL = auto()
     STRING = auto()
     NUMBER = auto()
     COMMENT = auto()

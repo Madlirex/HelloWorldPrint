@@ -54,7 +54,7 @@ class Tokenizer:
                 continue
 
             if char == "=":
-                self.tokens.append(Token(TokenType.OPERATION, char))
+                self.tokens.append(Token(TokenType.EQUAL, char))
                 self.advance()
                 continue
 
@@ -154,10 +154,6 @@ class Tokenizer:
 
         while self.peek() != self.curr_quotes:
             value += self.advance()
-            print(value)
-            print(self.curr_quotes)
-
-        print(value)
 
         value += self.advance()
 
