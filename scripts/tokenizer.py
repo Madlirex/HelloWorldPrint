@@ -145,15 +145,13 @@ class Tokenizer:
 
     def read_string(self) -> Token:
 
-        value = self.peek()
-
-        if self.peek() == self.peek(1) and self.peek() == value and value == '"':
+        if self.peek() == '"' and self.peek(1) == '"' and self.peek(2) == '"':
             return self.read_multi_comment()
 
         value = self.advance()
         self.curr_quotes = value
 
-        while self.peek() != self.curr_quotes:
+        while self.peek() != self.curr_quotes and self.peek():
             value += self.advance()
 
         value += self.advance()

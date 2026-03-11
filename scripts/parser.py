@@ -17,7 +17,13 @@ class Parser:
         return tok
 
     def parse(self):
-        return self.parse_expression()
+
+        statements = []
+        while self.peek().token_type != TokenType.EOF:
+            statements.append(self.parse_expression())
+        p = Program()
+        p.nodes = statements
+        return p
 
     def parse_expression(self, precedence=0):
 
