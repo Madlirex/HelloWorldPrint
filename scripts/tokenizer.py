@@ -9,6 +9,7 @@ class Tokenizer:
         self.tokens: list[Token] = []
         self.curr_quotes: str = ''
         self.open_brackets: list[str] = []
+        self.curr_indent: int = 0
 
     def peek(self, x: int = 0) -> str | None:
         if self.pos + x >= len(self.code):
@@ -54,6 +55,10 @@ class Tokenizer:
 
             if char == '"' or char == "'":
                 self.tokens.append(self.read_string())
+                continue
+
+            if char == ";":
+                self.tokens.append(self.read_semicolon())
                 continue
 
             if char == ".":
@@ -106,6 +111,11 @@ class Tokenizer:
         self.tokens.append(Token(TokenType.EOF))
         return self.tokens
 
+    def read_semicolon(self) -> Token:
+        self.tokens.append(Token(TokenType.INDENT, self.curr_indent))
+        self.advance()
+        return Token(TokenType.NEWLINE, "\n")
+
     def read_operator(self) -> Token:
         operation = self.advance()
 
@@ -142,6 +152,8 @@ class Tokenizer:
         while self.peek() == " ":
             value += 1
             self.advance()
+
+        self.curr_indent = value
 
         return Token(TokenType.INDENT, value)
 

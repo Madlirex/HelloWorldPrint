@@ -2,7 +2,7 @@
     "# ahoj"
     čo ak x sa rovná 3? # a co take tu mam dat
 Dal si 3("print")
-    ibaže x sa rovná 0!
+    ibaže x sa rovná 0!;potom by som to musel zmenit
 Nesprávne("print")
     inak.(ha,
     da,
