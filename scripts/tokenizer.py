@@ -109,11 +109,11 @@ class Tokenizer:
     def read_operator(self) -> Token:
         operation = self.advance()
 
+        while operation + self.peek() in OPERATORS:
+            operation += self.advance()
+
         if self.peek() == '=':
             return Token(TokenType.EQUAL_OPERATOR, operation + self.advance())
-
-        elif self.peek() + operation in OPERATORS:
-            return Token(TokenType.OPERATOR, operation + self.advance())
 
         return Token(TokenType.OPERATOR, operation)
 
