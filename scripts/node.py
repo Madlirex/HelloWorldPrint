@@ -221,3 +221,15 @@ class Operation(Node):
         self.left: Node = left
         self.right: Node = right
         self.operator: str = operator
+
+class InNode(Node):
+
+    def __init__(self, left: Node, right: Node) -> None:
+        self.left: Node = left
+        self.right: Node = right
+
+class IsNode(Node):
+
+    def __init__(self, left: Node, right: Node) -> None:
+        self.left: Node = left
+        self.right: Node = right
