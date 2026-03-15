@@ -36,9 +36,10 @@ class Call(Node):
 
 class Assignment(Node):
 
-    def __init__(self, left: list[Node], right: list[Node]) -> None:
+    def __init__(self, left: list[Node], right: list[Node], operator: str = "=") -> None:
         self.left: list[Node] = left
         self.right: list[Node] = right
+        self.operator: str = operator
 
 class Program(Node):
 
@@ -196,3 +197,27 @@ class MatchNode(Node):
     def __init__(self, variable: Node, values: list[tuple[Node, list[Node]]]) -> None:
         self.variable: Node = variable
         self.values: list[tuple[Node, list[Node]]] = values
+
+class AndNode(Node):
+
+    def __init__(self, left: Node, right: Node) -> None:
+        self.left: Node =  left
+        self.right: Node = right
+
+class OrNode(Node):
+
+    def __init__(self, left: Node, right: Node) -> None:
+        self.left: Node = left
+        self.right: Node = right
+
+class NotNode(Node):
+
+    def __init__(self, value: Node) -> None:
+        self.value: Node = value
+
+class Operation(Node):
+
+    def __init__(self, left: Node, right: Node, operator: str) -> None:
+        self.left: Node = left
+        self.right: Node = right
+        self.operator: str = operator
