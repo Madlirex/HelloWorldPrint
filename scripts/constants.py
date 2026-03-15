@@ -58,3 +58,5 @@ BRACKET_PAIRS: dict[str, str] = {
         "]": "[",
         "}": "{"
 }
+
+OPERATORS = {'+', '-', '*', '**', '/', '%', '//'}

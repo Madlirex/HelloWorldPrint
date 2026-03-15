@@ -4,6 +4,8 @@ from enum import Enum, auto
 class TokenType(Enum):
     VALUE = auto()
     EQUAL = auto()
+    OPERATOR = auto()
+    EQUAL_OPERATOR = auto()
     STRING = auto()
     NUMBER = auto()
     COMMENT = auto()

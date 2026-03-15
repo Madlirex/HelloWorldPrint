@@ -1,5 +1,5 @@
 from token import Token, TokenType
-from constants import BRACKETS, BRACKET_PAIRS
+from constants import BRACKETS, BRACKET_PAIRS, OPERATORS
 
 class Tokenizer:
 
@@ -61,6 +61,10 @@ class Tokenizer:
                 self.advance()
                 continue
 
+            if char in OPERATORS:
+                self.tokens.append(self.read_operator())
+                continue
+
             if char == "=":
                 self.tokens.append(Token(TokenType.EQUAL, char))
                 self.advance()
@@ -101,6 +105,17 @@ class Tokenizer:
 
         self.tokens.append(Token(TokenType.EOF))
         return self.tokens
+
+    def read_operator(self) -> Token:
+        operation = self.advance()
+
+        if self.peek() == '=':
+            return Token(TokenType.EQUAL_OPERATOR, operation + self.advance())
+
+        elif self.peek() + operation in OPERATORS:
+            return Token(TokenType.OPERATOR, operation + self.advance())
+
+        return Token(TokenType.OPERATOR, operation)
 
     def read_bracket(self) -> Token:
         bracket = self.advance()
