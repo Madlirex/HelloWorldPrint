@@ -185,3 +185,14 @@ class Expression(Node):
 
     def __init__(self, value: str):
         self.value = value
+
+class Yield(Node):
+
+    def __init__(self, value):
+        self.value = value
+
+class MatchNode(Node):
+
+    def __init__(self, variable, values: list[tuple]):
+        self.variable = variable
+        self.values: list[tuple] = values
