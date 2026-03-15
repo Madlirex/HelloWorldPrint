@@ -7,7 +7,7 @@ Nesprávne("print")
     inak.(ha,
     da,
     na)
-Hmm nevem, dal si {x}(f"print")
+Hmm nevem, dal si {x}(f"print"))
 (){}[]
 """
 Multiline
