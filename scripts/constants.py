@@ -52,3 +52,9 @@ BRACKETS = {
     "{": TokenType.LBRACE,
     "}": TokenType.RBRACE,
 }
+
+BRACKET_PAIRS = {
+        ")": "(",
+        "]": "[",
+        "}": "{"
+}

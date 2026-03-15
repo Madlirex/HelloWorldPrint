@@ -1,5 +1,5 @@
 from token import Token, TokenType
-from constants import BRACKETS
+from constants import BRACKETS, BRACKET_PAIRS
 
 class Tokenizer:
 
@@ -8,6 +8,7 @@ class Tokenizer:
         self.pos: int = 0
         self.tokens: list[Token] = []
         self.curr_quotes: str = ''
+        self.open_brackets: list[str] = []
 
     def peek(self, x: int = 0) -> str | None:
         if self.pos + x >= len(self.code):
@@ -65,8 +66,7 @@ class Tokenizer:
                 continue
 
             if char in BRACKETS:
-                self.tokens.append(Token(BRACKETS[char], char))
-                self.advance()
+                self.tokens.append(self.read_bracket())
                 continue
 
             if char == "?":
@@ -90,8 +90,22 @@ class Tokenizer:
 
             raise Exception(f"Unknown char {char}")
 
+        if len(self.open_brackets) > 0:
+            raise Exception(f"Unclosed brackets: {", ".join(self.open_brackets)}")
+
         self.tokens.append(Token(TokenType.EOF))
         return self.tokens
+
+    def read_bracket(self) -> Token:
+        bracket = self.advance()
+        if not bracket in BRACKET_PAIRS:
+            self.open_brackets.append(bracket)
+        else:
+            if len(self.open_brackets) == 0 or self.open_brackets[-1] != BRACKET_PAIRS[bracket]:
+                raise Exception(f"Unexpected token at position {self.pos}: {bracket}")
+            else:
+                self.open_brackets.pop()
+        return Token(BRACKETS[bracket], bracket)
 
     def read_new_line(self) -> Token:
         return Token(TokenType.NEWLINE, self.advance())
