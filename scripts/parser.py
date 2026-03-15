@@ -1,114 +1,60 @@
-from token import TokenType
+from token import TokenType, Token
 from tokenizer import Tokenizer
 from node import *
 
 class Parser:
 
-    def __init__(self, tokens):
-        self.tokens = tokens
-        self.pos = 0
+    def __init__(self, tokenized_code: list[Token]) -> None:
+        self.tokens: list[Token] = tokenized_code
+        self.pos: int = 0
 
-    def peek(self):
-        return self.tokens[self.pos]
+    def peek(self, x: int = 1) -> Token | None:
 
-    def advance(self):
-        tok = self.tokens[self.pos]
-        self.pos += 1
-        return tok
+        if 0 > self.pos + x >= len(self.tokens):
+            return None
 
-    def parse(self):
+        return self.tokens[self.pos + x]
 
-        statements = []
-        while self.peek().token_type != TokenType.EOF:
-            statements.append(self.parse_expression())
-        p = Program()
-        p.nodes = statements
-        return p
+    def advance(self) -> Token | None:
 
-    def parse_expression(self, precedence=0):
+        if self.pos < len(self.tokens):
+            self.pos += 1
 
-        token = self.advance()
-        left = self.nud(token)
+        return self.peek(-1)
 
-        while precedence < self.get_precedence():
-            token = self.advance()
-            left = self.led(token, left)
+    def check(self, tok_type: TokenType) -> bool:
 
-        return left
+        tok: Token = self.peek()
 
-    def nud(self, token):
+        return tok is not None and tok.token_type == tok_type
 
-        if token.token_type == TokenType.VALUE:
-            return Variable(token.value)
+    def match(self, tok_type: TokenType) -> bool:
 
-        if token.token_type == TokenType.NUMBER:
-            return Number(token.value)
+        if self.check(tok_type):
+            self.advance()
+            return True
 
-        if token.token_type == TokenType.STRING:
-            return String(token.value)
+        return False
 
-        if token.token_type == TokenType.LPAREN:
-            expr = self.parse_expression()
-            self.expect(TokenType.RPAREN)
-            return expr
+    def consume(self, tok_type: TokenType) -> Token:
 
-        raise Exception("Unexpected token")
+        if self.check(tok_type):
+            return self.advance()
 
-    def led(self, token, left):
+        raise SyntaxError(f"Expected {tok_type}, got {self.peek().token_type}")
 
-        if token.token_type == TokenType.EQUAL:
+    def is_at_end(self) -> bool:
 
-            right = self.parse_expression(9)
-            return Assignment(left, right)
+        return self.peek().token_type == TokenType.EOF
 
-        if token.token_type == TokenType.DOT:
+    def parse(self) -> Program:
 
-            name = self.advance()
-            return Attribute(left, name.value)
+        program = Program()
 
-        if token.token_type == TokenType.LPAREN:
+        while not self.is_at_end():
+            program.nodes.append(str(self.advance().value))
 
-            args = []
-
-            if self.peek().token_type != TokenType.RPAREN:
-
-                while True:
-
-                    args.append(self.parse_expression())
-
-                    if self.peek().token_type != TokenType.COMMA:
-                        break
-
-                    self.advance()
-
-            self.expect(TokenType.RPAREN)
-
-            return Call(left, args)
-
-        raise Exception("Unknown operator")
-
-    def get_precedence(self):
-
-        if self.pos >= len(self.tokens):
-            return 0
-
-        tok = self.peek()
-
-        table = {
-            TokenType.EQUAL: 10,
-            TokenType.LPAREN: 40,
-            TokenType.DOT: 50
-        }
-
-        return table.get(tok.token_type, 0)
-
-    def expect(self, t):
-
-        tok = self.advance()
-
-        if tok.token_type != t:
-            raise Exception("Unexpected token")
-
+        return program
 
 code = open("../tests/helloworld.print", 'r', encoding='utf8').read()
 
