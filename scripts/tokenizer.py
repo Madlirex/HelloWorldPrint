@@ -29,9 +29,15 @@ class Tokenizer:
         while self.pos < len(self.code):
 
             char = self.peek()
+
             if char == "\n":
-                self.tokens.append(self.read_new_line())
-                self.tokens.append(self.read_indent())
+                value = self.read_new_line()
+
+                if value is not None:
+                    self.tokens.append(value)
+                    self.tokens.append(self.read_indent())
+                else:
+                    self.advance()
                 continue
 
             if char.isspace():
@@ -98,6 +104,7 @@ class Tokenizer:
 
     def read_bracket(self) -> Token:
         bracket = self.advance()
+
         if not bracket in BRACKET_PAIRS:
             self.open_brackets.append(bracket)
         else:
@@ -105,10 +112,13 @@ class Tokenizer:
                 raise Exception(f"Unexpected token at position {self.pos}: {bracket}")
             else:
                 self.open_brackets.pop()
+
         return Token(BRACKETS[bracket], bracket)
 
-    def read_new_line(self) -> Token:
-        return Token(TokenType.NEWLINE, self.advance())
+    def read_new_line(self) -> Token | None:
+        if len(self.open_brackets) == 0:
+            return Token(TokenType.NEWLINE, self.advance())
+        return None
 
     def read_indent(self) -> Token:
 

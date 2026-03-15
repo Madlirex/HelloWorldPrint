@@ -4,7 +4,9 @@
 Dal si 3("print")
     ibaže x sa rovná 0!
 Nesprávne("print")
-    inak.
+    inak.(ha,
+    da,
+    na)
 Hmm nevem, dal si {x}(f"print")
 (){}[]
 """
