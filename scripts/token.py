@@ -27,7 +27,7 @@ class TokenType(Enum):
 
 
     @property
-    def is_bracket(self):
+    def is_bracket(self) -> bool:
         return self in {
             TokenType.LPAREN, TokenType.RPAREN,
             TokenType.LBRACKET, TokenType.RBRACKET,
@@ -35,7 +35,7 @@ class TokenType(Enum):
         }
 
     @property
-    def is_structural(self):
+    def is_structural(self) -> bool:
         return self in {
             TokenType.LPAREN, TokenType.RPAREN,
             TokenType.LBRACKET, TokenType.RBRACKET,
@@ -47,10 +47,10 @@ class TokenType(Enum):
 
 class Token:
 
-    def __init__(self, token_type: TokenType, value: str | int =""):
+    def __init__(self, token_type: TokenType, value: str | int = "") -> None:
         self.token_type: TokenType = token_type
         self.value: str | int = value
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"{self.token_type.name}: {self.value}"
 

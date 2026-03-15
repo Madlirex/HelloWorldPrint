@@ -1,6 +1,6 @@
 from token import TokenType
 
-KEYWORDS = {
+KEYWORDS: dict[tuple[str, ...], str] = {
         ("čo", "ak"): "if",
         ("ibaže",): "elif",
         ("inak",): "else",
@@ -44,7 +44,7 @@ KEYWORDS = {
         ("skrátená", "funkcia,", "väčšinou", "anonymná", "a", "bez", "mena,", "používa", "sa", "pri", "krátkych", "operáciach", "alebo", "vo", "vnútri", "funkcií", "ako", "argument"): "lambda"
 }
 
-BRACKETS = {
+BRACKETS: dict[str, TokenType] = {
     "(": TokenType.LPAREN,
     ")": TokenType.RPAREN,
     "[": TokenType.LBRACKET,
@@ -53,7 +53,7 @@ BRACKETS = {
     "}": TokenType.RBRACE,
 }
 
-BRACKET_PAIRS = {
+BRACKET_PAIRS: dict[str, str] = {
         ")": "(",
         "]": "[",
         "}": "{"
