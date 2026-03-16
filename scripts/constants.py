@@ -11,7 +11,7 @@ KEYWORDS: dict[tuple[str, ...], str] = {
         ("skús",): "try",
         ("okrem",): "except",
         ("na", "koniec"): "finally",
-        ("in",): "v",
+        ("v",): "in",
         ("sa", "rovná"): "==",
         ("je", "menšie", "ako"): "<",
         ("je", "väčšie", "ako"): ">",
@@ -64,3 +64,32 @@ OPERATORS = {
     '==', '!=', '<', '<=', '>', '>=',
     '&', '|', '^', '~', '<<', '>>'
 }
+
+KEYWORD_FUNCTIONS = {
+    ('if',): "parse_if",
+    ('while',): "parse_while",
+    ('for',): "parse_for",
+    ('class',): "parse_class",
+    ('def',): "parse_def",
+    ('try',): "parse_try",
+    ('==', '<', '>', '<=', '>=', '!='): "parse_operator",
+    ('True', 'False'): "parse_bool",
+    ('return',): "parse_return",
+    ('None',): "parse_none",
+    ('break',): "parse_break",
+    ('pass',): "parse_pas",
+    ('continue',): "parse_continue",
+    ('=',): "parse_assignment"
+}
+
+
+value = ""
+key = ''
+result = {}
+while value != 'q' and key != 'q':
+    key = tuple(input("key: ").split(" "))
+    value = input("value: ")
+    if value != 'q' and key != 'q':
+        result[key] = value
+
+print(f"{",\n".join([f'{key}: "{value}"' for key, value in result.items()])}")
