@@ -82,14 +82,14 @@ KEYWORD_FUNCTIONS = {
     ('=',): "parse_assignment"
 }
 
+if __name__ == "__main__":
+    value = ""
+    key = ''
+    result = {}
+    while value != 'q' and key != 'q':
+        key = tuple(input("key: ").split(" "))
+        value = input("value: ")
+        if value != 'q' and key != 'q':
+            result[key] = value
 
-value = ""
-key = ''
-result = {}
-while value != 'q' and key != 'q':
-    key = tuple(input("key: ").split(" "))
-    value = input("value: ")
-    if value != 'q' and key != 'q':
-        result[key] = value
-
-print(f"{",\n".join([f'{key}: "{value}"' for key, value in result.items()])}")
+    print(f"{",\n".join([f'{key}: "{value}"' for key, value in result.items()])}")
