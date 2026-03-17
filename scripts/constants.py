@@ -82,6 +82,12 @@ KEYWORD_FUNCTIONS = {
     ('=',): "parse_assignment"
 }
 
+FLAT_KEYWORD_FUNCTIONS = {
+    token: value
+    for keys, value in KEYWORD_FUNCTIONS.items()
+    for token in keys
+}
+
 if __name__ == "__main__":
     value = ""
     key = ''
