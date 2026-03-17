@@ -1,4 +1,4 @@
-from scripts.constants import KEYWORDS_LIST, FLAT_KEYWORD_FUNCTIONS, KEYWORDS, SWAPPED_KEYWORDS, PRECEDENCE
+from scripts.constants import KEYWORDS_LIST, FLAT_KEYWORD_FUNCTIONS, KEYWORDS, SWAPPED_KEYWORDS
 from token import TokenType, Token
 from tokenizer import Tokenizer
 from node import *
@@ -147,14 +147,47 @@ class Parser:
             self.consume(TokenType.QUESTION)
             elifs.append((cond, self.parse_block()))
 
-        else_body = []
+        return IfStatement(condition, body, elifs, self.parse_else())
+
+    def parse_else(self) -> list[Node] | None:
+        body = None
         if self.check_words(*SWAPPED_KEYWORDS['else']):
             self.consume_words(*SWAPPED_KEYWORDS['else'])
             self.consume(TokenType.EXCLAMAITON)
-            else_body = self.parse_block()
+            body = self.parse_block()
+        return body
 
-        return IfStatement(condition, body, elifs, else_body)
+    def parse_while(self) -> While:
+        self.consume_words(*SWAPPED_KEYWORDS['while'])
 
+        condition = self.parse_expression()
+        self.consume(TokenType.EXCLAMAITON)
+        body = self.parse_block()
+
+        return While(condition, body)
+
+    def parse_for(self) -> ForLoop:
+        self.consume_words(*SWAPPED_KEYWORDS['for'])
+
+        variable = self.parse_variables()
+
+        self.consume_words(*SWAPPED_KEYWORDS['in'])
+
+        expression = self.parse_expression()
+        self.consume(TokenType.EXCLAMAITON)
+        body = self.parse_block()
+
+        return ForLoop(variable, expression, body, self.parse_else())
+
+    def parse_variables(self) -> list[Variable]:
+
+        nodes = [Variable(self.consume(TokenType.VALUE).value)]
+
+        while self.check(TokenType.COMMA):
+            self.consume(TokenType.COMMA)
+            nodes.append(Variable(self.consume(TokenType.VALUE).value))
+
+        return nodes
 
 code = open("../tests/helloworld.print", 'r', encoding='utf8').read()
 
