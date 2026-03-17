@@ -44,6 +44,12 @@ KEYWORDS: dict[tuple[str, ...], str] = {
         ("skrátená", "funkcia,", "väčšinou", "anonymná", "a", "bez", "mena,", "používa", "sa", "pri", "krátkych", "operáciach", "alebo", "vo", "vnútri", "funkcií", "ako", "argument"): "lambda"
 }
 
+SWAPPED_KEYWORDS: dict[str, tuple[str, ...]] = {
+    value: key for key, value in KEYWORDS.items()
+}
+
+KEYWORDS_LIST = sorted(KEYWORDS.items(), key=lambda x: -len(x[0]))
+
 BRACKETS: dict[str, TokenType] = {
     "(": TokenType.LPAREN,
     ")": TokenType.RPAREN,
