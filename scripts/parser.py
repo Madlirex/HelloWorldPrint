@@ -1,6 +1,6 @@
+from scripts.constants import KEYWORDS_LIST, FLAT_KEYWORD_FUNCTIONS, KEYWORDS, SWAPPED_KEYWORDS, PRECEDENCE
 from token import TokenType, Token
 from tokenizer import Tokenizer
-from constants import KEYWORD_FUNCTIONS
 from node import *
 
 class Parser:
@@ -48,9 +48,17 @@ class Parser:
         if not self.match_words(*words):
             raise SyntaxError(f"Expected {' '.join(words)}, got {self.peek(0).value}")
 
-    def get_keyword(self) -> str | None:
+    def peek_keyword(self) -> str | None:
 
-        for words, replacement in sorted(KEYWORD_FUNCTIONS.items(), key=lambda x: -len(x[0])):
+        for words, replacement in KEYWORDS_LIST:
+            if self.check_words(*words):
+                return replacement
+
+        return None
+
+    def consume_keyword(self) -> str | None:
+
+        for words, replacement in KEYWORDS_LIST:
             if self.check_words(*words):
                 for _ in words:
                     self.advance()
@@ -94,27 +102,70 @@ class Parser:
 
         program = Program()
 
-        while not self.is_at_end():
-            program.nodes.append(self.parse(self.peek(0)))
+        program.nodes = self.parse_block()
 
         return program
 
-    def parse(self, token: Token) -> Node:
+    def parse_block(self) -> list[Node]:
 
+        block = []
+        indent = self.peek().value
+
+        while self.peek().value == indent and not self.is_at_end():
+            self.parse()
+
+        return block
+
+    def parse(self) -> Node:
+
+        if self.peek(0).token_type == TokenType.INDENT:
+            self.advance()
+
+        kw = self.peek_keyword()
+
+        if kw == "if":
+            return self.parse_if()
+
+        return self.parse_expression()
+
+    def parse_expression(self) -> Node:
         pass
-        # parse_if
-        # parse_while
+
+    def parse_if(self) -> IfStatement:
+        self.consume_words(*SWAPPED_KEYWORDS['if'])
+
+        condition = self.parse_expression()
+        self.consume(TokenType.QUESTION)
+        body = self.parse_block()
+
+        elifs = []
+        is_elif = self.check_words(*SWAPPED_KEYWORDS['elif'])
+
+        while is_elif:
+            self.consume_words(*SWAPPED_KEYWORDS['elif'])
+            cond = self.parse_expression()
+            self.consume(TokenType.QUESTION)
+            elifs.append((cond, self.parse_block()))
+
+        else_body = []
+        if self.check_words(*SWAPPED_KEYWORDS['else']):
+            self.consume_words(*SWAPPED_KEYWORDS['else'])
+            self.consume(TokenType.EXCLAMAITON)
+            else_body = self.parse_block()
+
+        return IfStatement(condition, body, elifs, else_body)
+
 
 code = open("../tests/helloworld.print", 'r', encoding='utf8').read()
 
 tokens = Tokenizer(code).tokenize()
 
-print("TOKENS:")
-print(tokens)
+#print("TOKENS:")
+#print(tokens)
 
 parser = Parser(tokens)
 
 ast = parser.parse_program()
 
 print("\nAST:")
-print("\n".join(ast.nodes))
+#print("\n".join(ast.nodes))
