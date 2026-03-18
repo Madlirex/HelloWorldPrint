@@ -8,10 +8,16 @@ class Block(Node):
     def __init__(self, nodes: list[Node] = None) -> None:
         self.nodes: list[Node] = nodes or []
 
+    def accept(self, visitor):
+        visitor.visit_assignment(self)
+
 class Variable(Node):
 
     def __init__(self, name: str) -> None:
         self.name: str = name
+
+    def accept(self, visitor):
+        return self.name
 
 
 class Number(Node):
@@ -24,6 +30,9 @@ class String(Node):
 
     def __init__(self, value: str) -> None:
         self.value: str = value
+
+    def accept(self, visitor):
+        return self.value
 
 
 class Attribute(Node):
@@ -46,6 +55,9 @@ class Assignment(Node):
         self.left: list[Node] = left
         self.right: list[Node] = right
         self.operator: str = operator
+
+    def accept(self, visitor):
+        return visitor.visit_assignment(self)
 
 class IfStatement(Node):
 

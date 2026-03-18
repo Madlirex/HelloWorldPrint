@@ -21,14 +21,6 @@ class Transpiler:
     def transpile(self, node: Node) -> str:
         return node.accept(self)
 
-    def transpile_block(self, indent: int) -> str:
-
-        result = ""
-        for line in self.ast.block.nodes:
-            result += " " * indent + f"{self.transpile(line)}\n"
-
-        return result
-
     def emit(self, text: str) -> str:
         return (self.indent * self.indent_size) * " " + text
 
@@ -42,7 +34,7 @@ class Transpiler:
 
     #region Visits
     def visit_if(self, node: IfStatement) -> str:
-        result = self.emit(f"if {node.condition}:\n")
+        result = self.emit(f"if {self.transpile(node.condition)}:\n")
 
         # noinspection PyArgumentList
         with self.indented():
@@ -51,10 +43,17 @@ class Transpiler:
 
         return result
 
+    def visit_assignment(self, node: Assignment) -> str:
+
+        left = ", ".join(self.transpile(i) for i in node.left)
+        right = ", ".join(self.transpile(i) for i in node.right)
+
+        return self.emit(f"{left}{node.operator}{right}")
+
     #endregion
 
 pr = Program()
-pr.block = Block([IfStatement(Variable("Hi"), Block([Assignment([Variable("Hi")], [String("Hello")])]))])
+pr.block = Block([IfStatement(Variable("Hi"), Block([Assignment([Variable("Hi")], [String("Hello")])])), Assignment([Variable("Hi")], [String("Hello")])])
 
 trans = Transpiler(pr)
 print(trans.transpile_program())
