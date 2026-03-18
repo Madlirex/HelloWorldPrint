@@ -41,11 +41,6 @@ class Assignment(Node):
         self.right: list[Node] = right
         self.operator: str = operator
 
-class Program(Node):
-
-    def __init__(self) -> None:
-        self.nodes: list[Node] = []
-
 class IfStatement(Node):
 
     def __init__(self, condition: Node, body: list[Node], elifs: list[tuple[Node, list[Node]]] = None, else_body: list[Node] = None) -> None:
@@ -234,3 +229,13 @@ class IsNode(Node):
     def __init__(self, left: Node, right: Node) -> None:
         self.left: Node = left
         self.right: Node = right
+
+class Block(Node):
+
+    def __init__(self, nodes: list[Node] = None) -> None:
+        self.nodes: list[Node] = nodes or []
+
+class Program(Node):
+
+    def __init__(self, block: Block = None) -> None:
+        self.block: Block = block or Block()
