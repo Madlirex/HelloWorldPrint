@@ -1,5 +1,7 @@
 class Node:
-    pass
+
+    def accept(self, visitor):
+        raise NotImplementedError
 
 class Block(Node):
 
@@ -52,6 +54,9 @@ class IfStatement(Node):
         self.body: Block = body
         self.elifs: list[tuple[Node, Block]] = elifs or []
         self.else_body: Block = else_body or Block([Pass()])
+
+    def accept(self, visitor):
+        return visitor.visit_if(self)
 
 class Return(Node):
 
