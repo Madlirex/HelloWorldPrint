@@ -1,6 +1,10 @@
 class Node:
     pass
 
+class Block(Node):
+
+    def __init__(self, nodes: list[Node] = None) -> None:
+        self.nodes: list[Node] = nodes or []
 
 class Variable(Node):
 
@@ -43,11 +47,11 @@ class Assignment(Node):
 
 class IfStatement(Node):
 
-    def __init__(self, condition: Node, body: list[Node], elifs: list[tuple[Node, list[Node]]] = None, else_body: list[Node] = None) -> None:
+    def __init__(self, condition: Node, body: Block, elifs: list[tuple[Node, Block]] = None, else_body: Block = None) -> None:
         self.condition: Node = condition
-        self.body: list[Node] = body
-        self.elifs: list[tuple[Node, list[Node]]] = elifs or []
-        self.else_body: list[Node] = else_body or []
+        self.body: Block = body
+        self.elifs: list[tuple[Node, Block]] = elifs or []
+        self.else_body: Block = else_body or Block([Pass()])
 
 class Return(Node):
 
@@ -56,22 +60,22 @@ class Return(Node):
 
 class FunctionDef(Node):
 
-    def __init__(self, name: str, params: list[str], body: list[Node]) -> None:
+    def __init__(self, name: str, params: list[str], body: Block) -> None:
         self.name: str = name
         self.params: list[str] = params
-        self.body: list[Node] = body
+        self.body: Block = body
 
 class While(Node):
 
-    def __init__(self, condition: Node, body: list[Node]) -> None:
+    def __init__(self, condition: Node, body: Block) -> None:
         self.condition: Node = condition
-        self.body: list[Node] = body
+        self.body: Block = body
 
 class TryExcept(Node):
 
-    def __init__(self, body: list[Node], excepts: list[tuple[Node, list[Node]]] = None) -> None:
-        self.body: list[Node] = body
-        self.excepts: list[tuple[Node, list[Node]]] = excepts or []
+    def __init__(self, body: Block, excepts: list[tuple[Node, Block]] = None) -> None:
+        self.body: Block = body
+        self.excepts: list[tuple[Node, Block]] = excepts or []
 
 class Lambda(Node):
     def __init__(self, params: list[Variable], body: Node) -> None:
@@ -80,17 +84,17 @@ class Lambda(Node):
 
 class ForLoop(Node):
 
-    def __init__(self, variable: list[Variable], expression: Node, body: list[Node], else_body: list[Node] = None) -> None:
+    def __init__(self, variable: list[Variable], expression: Node, body: Block, else_body: Block = None) -> None:
         self.variable: list[Variable] = variable
         self.expression: Node = expression
-        self.body: list[Node] = body
-        self.else_body = else_body or []
+        self.body: Block = body
+        self.else_body: Block = else_body or Block([Pass()])
 
 class ClassDef(Node):
 
-    def __init__(self, name: str, body: list[Node], parents: list[Node] = None) -> None:
+    def __init__(self, name: str, body: Block, parents: list[Node] = None) -> None:
         self.name: str = name
-        self.body: list[Node] = body
+        self.body: Block = body
         self.parents: list[Node] = parents or []
 
 class TernaryOp(Node):
@@ -190,9 +194,9 @@ class Yield(Node):
 
 class MatchNode(Node):
 
-    def __init__(self, variable: Node, values: list[tuple[Node, list[Node]]]) -> None:
+    def __init__(self, variable: Node, values: list[tuple[Node, Block]]) -> None:
         self.variable: Node = variable
-        self.values: list[tuple[Node, list[Node]]] = values
+        self.values: list[tuple[Node, Block]] = values
 
 class AndNode(Node):
 
@@ -230,12 +234,7 @@ class IsNode(Node):
         self.left: Node = left
         self.right: Node = right
 
-class Block(Node):
-
-    def __init__(self, nodes: list[Node] = None) -> None:
-        self.nodes: list[Node] = nodes or []
-
 class Program(Node):
 
     def __init__(self, block: Block = None) -> None:
-        self.block: Block = block or Block()
+        self.block: Block = block or Block([Pass()])
