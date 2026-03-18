@@ -9,6 +9,9 @@ class Parser:
         self.tokens: list[Token] = tokenized_code
         self.pos: int = 0
 
+    #region Helpers
+    #region Basic Helpers
+
     def peek(self, x: int = 0) -> Token | None:
         pos = self.pos + x
 
@@ -16,55 +19,6 @@ class Parser:
             return None
 
         return self.tokens[pos]
-
-    def check_words(self, *words: str) -> bool:
-
-        for i, word in enumerate(words):
-            tok = self.peek(i)
-
-            if tok is None:
-                return False
-
-            if tok.token_type != TokenType.VALUE:
-                return False
-
-            if tok.value != word:
-                return False
-
-        return True
-
-    def match_words(self, *words: str) -> bool:
-
-        if not self.check_words(*words):
-            return False
-
-        for _ in words:
-            self.advance()
-
-        return True
-
-    def consume_words(self, *words: str) -> None:
-
-        if not self.match_words(*words):
-            raise SyntaxError(f"Expected {' '.join(words)}, got {self.peek().value}")
-
-    def peek_keyword(self) -> str | None:
-
-        for words, replacement in KEYWORDS_LIST:
-            if self.check_words(*words):
-                return replacement
-
-        return None
-
-    def consume_keyword(self) -> str | None:
-
-        for words, replacement in KEYWORDS_LIST:
-            if self.check_words(*words):
-                for _ in words:
-                    self.advance()
-                return replacement
-
-        return None
 
     def advance(self) -> Token | None:
 
@@ -98,6 +52,74 @@ class Parser:
 
         return self.peek().token_type == TokenType.EOF
 
+    def skip_redundant_newlines(self) -> None:
+
+        while not self.is_at_end() and self.peek(2).token_type == TokenType.NEWLINE:
+
+            self.consume(TokenType.NEWLINE)
+            self.consume(TokenType.INDENT)
+
+    #endregion
+
+    #region Words Helpers
+
+    def check_words(self, *words: str) -> bool:
+
+        for i, word in enumerate(words):
+            tok = self.peek(i)
+
+            if tok is None:
+                return False
+
+            if tok.token_type != TokenType.VALUE:
+                return False
+
+            if tok.value != word:
+                return False
+
+        return True
+
+    def match_words(self, *words: str) -> bool:
+
+        if not self.check_words(*words):
+            return False
+
+        for _ in words:
+            self.advance()
+
+        return True
+
+    def consume_words(self, *words: str) -> None:
+
+        if not self.match_words(*words):
+            raise SyntaxError(f"Expected {' '.join(words)}, got {self.peek().value}")
+
+    #endregion
+
+    #region Keyword Helpers
+
+    def peek_keyword(self) -> str | None:
+
+        for words, replacement in KEYWORDS_LIST:
+            if self.check_words(*words):
+                return replacement
+
+        return None
+
+    def consume_keyword(self) -> str | None:
+
+        for words, replacement in KEYWORDS_LIST:
+            if self.check_words(*words):
+                for _ in words:
+                    self.advance()
+                return replacement
+
+        return None
+
+    #endregion
+
+    #endregion
+
     def parse_program(self) -> Program:
 
         program = Program()
@@ -105,6 +127,18 @@ class Parser:
         program.nodes = self.parse_block()
 
         return program
+
+    def parse(self) -> Node:
+
+        if self.peek().token_type == TokenType.INDENT:
+            self.advance()
+
+        kw = self.peek_keyword()
+
+        if kw == "if":
+            return self.parse_if()
+
+        return self.parse_expression()
 
     def parse_block(self) -> Block:
 
@@ -122,25 +156,6 @@ class Parser:
             self.skip_redundant_newlines()
 
         return Block(nodes)
-
-    def skip_redundant_newlines(self) -> None:
-
-        while not self.is_at_end() and self.peek(2).token_type == TokenType.NEWLINE:
-
-            self.consume(TokenType.NEWLINE)
-            self.consume(TokenType.INDENT)
-
-    def parse(self) -> Node:
-
-        if self.peek().token_type == TokenType.INDENT:
-            self.advance()
-
-        kw = self.peek_keyword()
-
-        if kw == "if":
-            return self.parse_if()
-
-        return self.parse_expression()
 
     def parse_expression(self) -> Node:
         pass
