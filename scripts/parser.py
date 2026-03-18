@@ -203,6 +203,30 @@ class Parser:
 
         return nodes
 
+    def parse_def(self) -> FunctionDef:
+
+        name = self.consume(TokenType.VALUE).value
+        self.consume(TokenType.LPAREN)
+        params = self.parse_params()
+
+        body = self.parse_block()
+        return FunctionDef(name, body, params)
+
+    def parse_params(self) -> list[Node]:
+        pass
+
+    def parse_class(self) -> ClassDef:
+
+        name = self.consume(TokenType.VALUE).value
+        self.consume(TokenType.LPAREN)
+        parents = self.parse_parents()
+
+        body = self.parse_block()
+        return ClassDef(name, body, parents)
+
+    def parse_parents(self) -> list[Node]:
+        pass
+
 code = open("../tests/helloworld.print", 'r', encoding='utf8').read()
 
 tokens = Tokenizer(code).tokenize()

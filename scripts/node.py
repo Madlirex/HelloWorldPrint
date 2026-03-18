@@ -60,9 +60,9 @@ class Return(Node):
 
 class FunctionDef(Node):
 
-    def __init__(self, name: str, params: list[str], body: Block) -> None:
+    def __init__(self, name: str, body: Block, params: list[Node] = []) -> None:
         self.name: str = name
-        self.params: list[str] = params
+        self.params: list[Node] = params or []
         self.body: Block = body
 
 class While(Node):
