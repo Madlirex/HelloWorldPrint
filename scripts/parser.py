@@ -9,7 +9,7 @@ class Parser:
         self.tokens: list[Token] = tokenized_code
         self.pos: int = 0
 
-    def peek(self, x: int = 1) -> Token | None:
+    def peek(self, x: int = 0) -> Token | None:
         pos = self.pos + x
 
         if pos < 0 or pos >= len(self.tokens):
@@ -46,7 +46,7 @@ class Parser:
     def consume_words(self, *words: str) -> None:
 
         if not self.match_words(*words):
-            raise SyntaxError(f"Expected {' '.join(words)}, got {self.peek(0).value}")
+            raise SyntaxError(f"Expected {' '.join(words)}, got {self.peek().value}")
 
     def peek_keyword(self) -> str | None:
 
@@ -75,7 +75,7 @@ class Parser:
 
     def check(self, tok_type: TokenType) -> bool:
 
-        tok: Token = self.peek(0)
+        tok: Token = self.peek()
 
         return tok is not None and tok.token_type == tok_type
 
@@ -92,11 +92,11 @@ class Parser:
         if self.check(tok_type):
             return self.advance()
 
-        raise SyntaxError(f"Expected {tok_type}, got {self.peek(0).token_type}")
+        raise SyntaxError(f"Expected {tok_type}, got {self.peek().token_type}")
 
     def is_at_end(self) -> bool:
 
-        return self.peek(0).token_type == TokenType.EOF
+        return self.peek().token_type == TokenType.EOF
 
     def parse_program(self) -> Program:
 
@@ -111,9 +111,9 @@ class Parser:
         self.skip_redundant_newlines()
 
         nodes = []
-        indent = self.peek(0).value
+        indent = self.peek().value
 
-        while self.peek().value == indent and not self.is_at_end():
+        while self.peek(1).value == indent and not self.is_at_end():
             self.advance()
             self.advance()
 
@@ -132,7 +132,7 @@ class Parser:
 
     def parse(self) -> Node:
 
-        if self.peek(0).token_type == TokenType.INDENT:
+        if self.peek().token_type == TokenType.INDENT:
             self.advance()
 
         kw = self.peek_keyword()
