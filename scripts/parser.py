@@ -75,7 +75,7 @@ class Parser:
 
     def check(self, tok_type: TokenType) -> bool:
 
-        tok: Token = self.peek()
+        tok: Token = self.peek(0)
 
         return tok is not None and tok.token_type == tok_type
 
@@ -92,11 +92,11 @@ class Parser:
         if self.check(tok_type):
             return self.advance()
 
-        raise SyntaxError(f"Expected {tok_type}, got {self.peek().token_type}")
+        raise SyntaxError(f"Expected {tok_type}, got {self.peek(0).token_type}")
 
     def is_at_end(self) -> bool:
 
-        return self.peek().token_type == TokenType.EOF
+        return self.peek(0).token_type == TokenType.EOF
 
     def parse_program(self) -> Program:
 
@@ -106,15 +106,29 @@ class Parser:
 
         return program
 
-    def parse_block(self) -> list[Node]:
+    def parse_block(self) -> Block:
 
-        block = []
-        indent = self.peek().value
+        self.skip_redundant_newlines()
+
+        nodes = []
+        indent = self.peek(0).value
 
         while self.peek().value == indent and not self.is_at_end():
-            self.parse()
+            self.advance()
+            self.advance()
 
-        return block
+            nodes.append(self.parse())
+
+            self.skip_redundant_newlines()
+
+        return Block(nodes)
+
+    def skip_redundant_newlines(self) -> None:
+
+        while not self.is_at_end() and self.peek(2).token_type == TokenType.NEWLINE:
+
+            self.consume(TokenType.NEWLINE)
+            self.consume(TokenType.INDENT)
 
     def parse(self) -> Node:
 

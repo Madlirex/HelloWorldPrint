@@ -1,3 +1,5 @@
+
+
 x = input()
     "# ahoj"
     čo ak x sa rovná 3? # a co take tu mam dat
@@ -7,6 +9,10 @@ Nesprávne("print")
     inak.(ha,
     da,
     na)
+
+
+
+
 x = 3 + 2
 x: ! ? , .  - + * / % ** // >=
 x += 4
