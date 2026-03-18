@@ -11,6 +11,8 @@ class Tokenizer:
         self.open_brackets: list[str] = []
         self.curr_indent: int = 0
 
+    #region Helper Functions
+
     def peek(self, x: int = 0) -> str | None:
         if self.pos + x >= len(self.code):
             return None
@@ -22,6 +24,8 @@ class Tokenizer:
         char = self.code[self.pos]
         self.pos += 1
         return char
+
+    #endregion
 
     def tokenize(self) -> list[Token]:
 

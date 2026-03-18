@@ -1,5 +1,7 @@
 from token import TokenType
 
+#region Keywords
+
 KEYWORDS: dict[tuple[str, ...], str] = {
         ("čo", "ak"): "if",
         ("ibaže",): "elif",
@@ -50,26 +52,6 @@ SWAPPED_KEYWORDS: dict[str, tuple[str, ...]] = {
 
 KEYWORDS_LIST = sorted(KEYWORDS.items(), key=lambda x: -len(x[0]))
 
-BRACKETS: dict[str, TokenType] = {
-    "(": TokenType.LPAREN,
-    ")": TokenType.RPAREN,
-    "[": TokenType.LBRACKET,
-    "]": TokenType.RBRACKET,
-    "{": TokenType.LBRACE,
-    "}": TokenType.RBRACE,
-}
-
-BRACKET_PAIRS: dict[str, str] = {
-        ")": "(",
-        "]": "[",
-        "}": "{"
-}
-
-OPERATORS = {
-    '+', '-', '*', '**', '/', '%', '//',
-    '==', '!=', '<', '<=', '>', '>=',
-    '&', '|', '^', '~', '<<', '>>'
-}
 
 KEYWORD_FUNCTIONS = {
     ('if',): "parse_if",
@@ -92,6 +74,29 @@ FLAT_KEYWORD_FUNCTIONS = {
     token: value
     for keys, value in KEYWORD_FUNCTIONS.items()
     for token in keys
+}
+
+#endregion
+
+BRACKETS: dict[str, TokenType] = {
+    "(": TokenType.LPAREN,
+    ")": TokenType.RPAREN,
+    "[": TokenType.LBRACKET,
+    "]": TokenType.RBRACKET,
+    "{": TokenType.LBRACE,
+    "}": TokenType.RBRACE,
+}
+
+BRACKET_PAIRS: dict[str, str] = {
+        ")": "(",
+        "]": "[",
+        "}": "{"
+}
+
+OPERATORS = {
+    '+', '-', '*', '**', '/', '%', '//',
+    '==', '!=', '<', '<=', '>', '>=',
+    '&', '|', '^', '~', '<<', '>>'
 }
 
 if __name__ == "__main__":
