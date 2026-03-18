@@ -25,6 +25,7 @@ class Tokenizer:
 
     def tokenize(self) -> list[Token]:
 
+        self.tokens.append(Token(TokenType.NEWLINE, '\n'))
         self.tokens.append(self.read_indent())
 
         while self.pos < len(self.code):
