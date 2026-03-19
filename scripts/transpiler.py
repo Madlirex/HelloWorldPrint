@@ -34,21 +34,28 @@ class Transpiler:
             self.indent -= 1
 
     #region Visits
+
+    def visit_block(self, node: Block) -> str:
+
+        result = ''
+
+        with self.indented():
+            for stmt in node.nodes:
+                result += self.transpile(stmt) + "\n"
+
+        return result
+
     def visit_if(self, node: IfStatement) -> str:
         result = self.emit(f"if {self.transpile(node.condition)}:\n")
 
-        with self.indented():
-            for stmt in node.body.nodes:
-                result += self.transpile(stmt) + "\n"
+        result += self.visit_block(node.body)
 
         return result
 
     def visit_while(self, node: While) -> str:
         result = self.emit(f"while {self.transpile(node.condition)}:\n")
 
-        with self.indented():
-            for stmt in node.body.nodes:
-                result += self.transpile(stmt) + "\n"
+        result += self.visit_block(node.body)
 
         return result
 
