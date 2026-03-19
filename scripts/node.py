@@ -235,16 +235,25 @@ class AndNode(Node):
         self.left: Node =  left
         self.right: Node = right
 
+    def accept(self, visitor):
+        return visitor.visit_and(self)
+
 class OrNode(Node):
 
     def __init__(self, left: Node, right: Node) -> None:
         self.left: Node = left
         self.right: Node = right
 
+    def accept(self, visitor):
+        return visitor.visit_or(self)
+
 class NotNode(Node):
 
     def __init__(self, value: Node) -> None:
         self.value: Node = value
+
+    def accept(self, visitor):
+        return visitor.visit_not(self)
 
 class Operation(Node):
 
@@ -253,17 +262,26 @@ class Operation(Node):
         self.right: Node = right
         self.operator: str = operator
 
+    def accept(self, visitor):
+        return visitor.visit_operation(self)
+
 class InNode(Node):
 
     def __init__(self, left: Node, right: Node) -> None:
         self.left: Node = left
         self.right: Node = right
 
+    def accept(self, visitor):
+        return visitor.visit_in(self)
+
 class IsNode(Node):
 
     def __init__(self, left: Node, right: Node) -> None:
         self.left: Node = left
         self.right: Node = right
+
+    def accept(self, visitor):
+        return visitor.visit_is(self)
 
 class Program(Node):
 

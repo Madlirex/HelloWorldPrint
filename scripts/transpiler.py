@@ -108,6 +108,28 @@ class Transpiler:
     def visit_return(self, node: Return) -> str:
         return f"return {self.transpile(node.value)}"
 
+    #region Logical Expressions
+
+    def visit_in(self, node: InNode) -> str:
+        return f"{self.transpile(node.left)} in {self.transpile(node.right)}"
+
+    def visit_is(self, node: IsNode) -> str:
+        return f"{self.transpile(node.left)} is {self.transpile(node.right)}"
+
+    def visit_or(self, node: OrNode) -> str:
+        return f"{self.transpile(node.left)} or {self.transpile(node.right)}"
+
+    def visit_and(self, node: AndNode) -> str:
+        return f"{self.transpile(node.left)} and {self.transpile(node.right)}"
+
+    def visit_not(self, node: NotNode) -> str:
+        return f"not {self.transpile(node.value)}"
+
+    def visit_operation(self, node: Operation) -> str:
+        return f"{self.transpile(node.left)} {node.operator} {self.transpile(node.right)}"
+
+    #endregion
+
     #endregion
 
 pr = Program()
