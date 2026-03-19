@@ -95,6 +95,18 @@ class Transpiler:
 
         return result
 
+    def visit_pass(self) -> str:
+        return "pass"
+
+    def visit_continue(self) -> str:
+        return "continue"
+
+    def visit_break(self) -> str:
+        return "break"
+
+    def visit_return(self, node: Return) -> str:
+        return f"return {self.transpile(node.value)}"
+
     #endregion
 
 pr = Program()
