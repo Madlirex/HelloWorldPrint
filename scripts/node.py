@@ -78,6 +78,9 @@ class Return(Node):
     def __init__(self, value: Node) -> None:
         self.value: Node = value
 
+    def accept(self, visitor):
+        return visitor.accept_return(self)
+
 class FunctionDef(Node):
 
     def __init__(self, name: str, body: Block, params: list[Node] = Node) -> None:
@@ -201,15 +204,19 @@ class Raise(Node):
         self.value: Node = value
 
 class Break(Node):
-    pass
+
+    def accept(self, visitor):
+        return visitor.accept_break(self)
 
 class Continue(Node):
-    pass
+
+    def accept(self, visitor):
+        return visitor.accept_continue(self)
 
 class Pass(Node):
 
     def accept(self, visitor):
-        return "pass"
+        return visitor.accept_pass(self)
 
 class Expression(Node):
 
