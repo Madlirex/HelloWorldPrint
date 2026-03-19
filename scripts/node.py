@@ -117,6 +117,10 @@ class ClassDef(Node):
         self.body: Block = body
         self.parents: list[Node] = parents or []
 
+    def accept(self, visitor):
+        return visitor.visit_class(self)
+
+
 class TernaryOp(Node):
 
     def __init__(self, condition: Node, value1: Node, value2: Node) -> None:

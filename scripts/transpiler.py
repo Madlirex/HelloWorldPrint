@@ -19,6 +19,9 @@ class Transpiler:
 
         return result
 
+    def transpile_nodes(self, nodes: list[Node] | tuple[Node, ...]) -> str:
+        return ",".join(self.transpile(node) for node in nodes)
+
     def transpile(self, node: Node) -> str:
         return node.accept(self)
 
@@ -78,10 +81,18 @@ class Transpiler:
 
         return f"{left}{node.operator}{right}"
 
+    def visit_class(self, node: ClassDef) -> str:
+
+        result = self.emit(f"class {node.name}({self.transpile_nodes(node.parents)}):\n")
+        result += self.visit_block(node.body)
+
+        return result
+
     #endregion
 
 pr = Program()
 pr.block = Block([IfStatement(Variable("Hi"), Block([Assignment([Variable("Hi")], [String("Hello")])])), Assignment([Variable("Hi")], [String("Hello")])])
+pr.block = Block([FunctionDef("SampleFunction", Block(), [Variable("Fucker")])])
 pr.block = Block([ClassDef("SampleClass", pr.block)])
 trans = Transpiler(pr)
 print(trans.transpile_program())
