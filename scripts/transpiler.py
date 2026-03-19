@@ -50,7 +50,7 @@ class Transpiler:
         return result
 
     def visit_if(self, node: IfStatement) -> str:
-        result = self.emit(f"if {self.transpile(node.condition)}:\n")
+        result = f"if {self.transpile(node.condition)}:\n"
 
         result += self.visit_block(node.body)
 
@@ -68,7 +68,7 @@ class Transpiler:
         return self.emit("else:\n") + self.visit_block(body)
 
     def visit_while(self, node: While) -> str:
-        result = self.emit(f"while {self.transpile(node.condition)}:\n")
+        result = f"while {self.transpile(node.condition)}:\n"
 
         result += self.visit_block(node.body)
 
@@ -83,7 +83,14 @@ class Transpiler:
 
     def visit_class(self, node: ClassDef) -> str:
 
-        result = self.emit(f"class {node.name}({self.transpile_nodes(node.parents)}):\n")
+        result = f"class {node.name}({self.transpile_nodes(node.parents)}):\n"
+        result += self.visit_block(node.body)
+
+        return result
+
+    def visit_function(self, node: FunctionDef) -> str:
+
+        result = f"def {node.name}({self.transpile_nodes(node.params)}):\n"
         result += self.visit_block(node.body)
 
         return result
@@ -92,7 +99,7 @@ class Transpiler:
 
 pr = Program()
 pr.block = Block([IfStatement(Variable("Hi"), Block([Assignment([Variable("Hi")], [String("Hello")])])), Assignment([Variable("Hi")], [String("Hello")])])
-pr.block = Block([FunctionDef("SampleFunction", Block(), [Variable("Fucker")])])
+pr.block = Block([FunctionDef("SampleFunction", pr.block, [Variable("Fucker"), Variable("sucker")])])
 pr.block = Block([ClassDef("SampleClass", pr.block)])
 trans = Transpiler(pr)
 print(trans.transpile_program())

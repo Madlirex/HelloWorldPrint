@@ -85,6 +85,9 @@ class FunctionDef(Node):
         self.params: list[Node] = params or []
         self.body: Block = body
 
+    def accept(self, visitor):
+        return visitor.visit_function(self)
+
 class While(Node):
 
     def __init__(self, condition: Node, body: Block) -> None:
