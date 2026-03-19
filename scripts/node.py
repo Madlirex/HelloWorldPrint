@@ -218,11 +218,6 @@ class Pass(Node):
     def accept(self, visitor):
         return visitor.visit_pass()
 
-class Expression(Node):
-
-    def __init__(self, value: str) -> None:
-        self.value: str = value
-
 class Yield(Node):
 
     def __init__(self, value: Node) -> None:

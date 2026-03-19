@@ -3,7 +3,7 @@ from contextlib import contextmanager
 from node import *
 
 
-# noinspection PyArgumentList
+# noinspection PyMethodMayBeStatic
 class Transpiler:
 
     def __init__(self, ast: Program) -> None:
@@ -42,6 +42,7 @@ class Transpiler:
 
         result = ''
 
+        # noinspection PyArgumentList
         with self.indented():
             for stmt in node.nodes:
                 print(type(stmt))
