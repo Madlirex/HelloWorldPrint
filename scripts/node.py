@@ -79,7 +79,7 @@ class Return(Node):
         self.value: Node = value
 
     def accept(self, visitor):
-        return visitor.accept_return(self)
+        return visitor.visit_return(self)
 
 class FunctionDef(Node):
 
@@ -206,17 +206,17 @@ class Raise(Node):
 class Break(Node):
 
     def accept(self, visitor):
-        return visitor.accept_break(self)
+        return visitor.visit_break()
 
 class Continue(Node):
 
     def accept(self, visitor):
-        return visitor.accept_continue(self)
+        return visitor.visit_continue()
 
 class Pass(Node):
 
     def accept(self, visitor):
-        return visitor.accept_pass(self)
+        return visitor.visit_pass()
 
 class Expression(Node):
 
