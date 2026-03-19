@@ -122,9 +122,7 @@ class Parser:
 
     def parse_program(self) -> Program:
 
-        program = Program()
-
-        program.nodes = self.parse_block()
+        program = Program(self.parse_block())
 
         return program
 
@@ -254,4 +252,4 @@ parser = Parser(tokens)
 ast = parser.parse_program()
 
 print("\nAST:")
-#print("\n".join(ast.nodes))
+print(ast.block.nodes)

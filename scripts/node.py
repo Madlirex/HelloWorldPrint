@@ -77,7 +77,7 @@ class Return(Node):
 
 class FunctionDef(Node):
 
-    def __init__(self, name: str, body: Block, params: list[Node] = []) -> None:
+    def __init__(self, name: str, body: Block, params: list[Node] = Node) -> None:
         self.name: str = name
         self.params: list[Node] = params or []
         self.body: Block = body
@@ -254,4 +254,4 @@ class IsNode(Node):
 class Program(Node):
 
     def __init__(self, block: Block = None) -> None:
-        self.block: Block = block or Block([Pass()])
+        self.block: Block = Block([Pass()]) if not block or len(block.nodes) == 0 else block
