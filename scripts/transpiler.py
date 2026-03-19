@@ -20,7 +20,7 @@ class Transpiler:
         return result
 
     def transpile_nodes(self, nodes: list[Node] | tuple[Node, ...]) -> str:
-        return ",".join(self.transpile(node) for node in nodes)
+        return ", ".join(self.transpile(node) for node in nodes)
 
     def transpile(self, node: Node) -> str:
         return node.accept(self)
@@ -77,10 +77,7 @@ class Transpiler:
 
     def visit_assignment(self, node: Assignment) -> str:
 
-        left = ", ".join(self.transpile(i) for i in node.left)
-        right = ", ".join(self.transpile(i) for i in node.right)
-
-        return f"{left}{node.operator}{right}"
+        return f"{self.transpile_nodes(node.left)} = {self.transpile_nodes(node.right)}"
 
     def visit_class(self, node: ClassDef) -> str:
 
