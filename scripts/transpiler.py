@@ -50,7 +50,18 @@ class Transpiler:
 
         result += self.visit_block(node.body)
 
+        for elseif in node.elifs:
+            result += self.visit_elif(elseif)
+
+        result += self.visit_else(node.else_body)
+
         return result
+
+    def visit_elif(self, node: tuple[Node, Block]) -> str:
+        return self.emit(f"elif {self.transpile(node[0])}:\n") + self.visit_block(node[1])
+
+    def visit_else(self, body: Block) -> str:
+        return self.emit("else:\n") + self.visit_block(body)
 
     def visit_while(self, node: While) -> str:
         result = self.emit(f"while {self.transpile(node.condition)}:\n")
