@@ -3,6 +3,7 @@ from contextlib import contextmanager
 from node import *
 
 
+# noinspection PyArgumentList
 class Transpiler:
 
     def __init__(self, ast: Program) -> None:
@@ -36,12 +37,21 @@ class Transpiler:
     def visit_if(self, node: IfStatement) -> str:
         result = self.emit(f"if {self.transpile(node.condition)}:\n")
 
-        # noinspection PyArgumentList
         with self.indented():
             for stmt in node.body.nodes:
                 result += self.transpile(stmt) + "\n"
 
         return result
+
+    def visit_while(self, node: While) -> str:
+        result = self.emit(f"while {self.transpile(node.condition)}:\n")
+
+        with self.indented():
+            for stmt in node.body.nodes:
+                result += self.transpile(stmt) + "\n"
+
+        return result
+
 
     def visit_assignment(self, node: Assignment) -> str:
 
