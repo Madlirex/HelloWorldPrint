@@ -25,6 +25,9 @@ class Number(Node):
     def __init__(self, value: int) -> None:
         self.value: int = value
 
+    def accept(self, visitor):
+        return self.value
+
 
 class String(Node):
 
@@ -197,7 +200,9 @@ class Continue(Node):
     pass
 
 class Pass(Node):
-    pass
+
+    def accept(self, visitor):
+        return "pass"
 
 class Expression(Node):
 

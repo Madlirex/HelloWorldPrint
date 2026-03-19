@@ -41,7 +41,8 @@ class Transpiler:
 
         with self.indented():
             for stmt in node.nodes:
-                result += self.transpile(stmt) + "\n"
+                print(type(stmt))
+                result += self.emit(self.transpile(stmt) + "\n")
 
         return result
 
@@ -70,18 +71,17 @@ class Transpiler:
 
         return result
 
-
     def visit_assignment(self, node: Assignment) -> str:
 
         left = ", ".join(self.transpile(i) for i in node.left)
         right = ", ".join(self.transpile(i) for i in node.right)
 
-        return self.emit(f"{left}{node.operator}{right}")
+        return f"{left}{node.operator}{right}"
 
     #endregion
 
 pr = Program()
 pr.block = Block([IfStatement(Variable("Hi"), Block([Assignment([Variable("Hi")], [String("Hello")])])), Assignment([Variable("Hi")], [String("Hello")])])
-
+pr.block = Block([ClassDef("SampleClass", pr.block)])
 trans = Transpiler(pr)
 print(trans.transpile_program())
