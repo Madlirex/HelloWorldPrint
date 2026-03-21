@@ -168,6 +168,20 @@ class Transpiler:
 
         return result
 
+    def visit_try(self, node: TryExcept) -> str:
+
+        result = "try:\n"
+        result += self.visit_block(node.body)
+        for except_node in node.excepts:
+            result += self.visit_except(except_node)
+        return result
+
+    def visit_except(self, node: tuple[Node, Block]) -> str:
+
+        result = f"except {self.transpile(node[0])}:\n"
+        result += self.visit_block(node[1])
+        return result
+
     #endregion
 
     #endregion

@@ -106,6 +106,9 @@ class TryExcept(Node):
         self.body: Block = body
         self.excepts: list[tuple[Node, Block]] = excepts or []
 
+    def accept(self, visitor):
+        return visitor.visit_try(self)
+
 class Lambda(Node):
     def __init__(self, params: list[Variable], body: Node) -> None:
         self.params: list[Variable] = params
