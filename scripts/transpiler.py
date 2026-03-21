@@ -133,6 +133,12 @@ class Transpiler:
 
     #region Data Types
 
+    def visit_none(self, node: NoneNode) -> str:
+        return "None"
+
+    def visit_bool(self, node: Boolean) -> str:
+        return str(node.value)
+
     def visit_list(self, node: ListNode) -> str:
         return f"[{self.transpile_nodes(node.values)}]"
 

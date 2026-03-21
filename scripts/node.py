@@ -180,8 +180,12 @@ class Boolean(Node):
     def __init__(self, value: bool) -> None:
         self.value: bool = value
 
+    def accept(self, visitor):
+        return visitor.visit_boolean(self)
+
 class NoneNode(Node):
-    pass
+    def accept(self, visitor):
+        return visitor.visit_none(self)
 
 class Index(Node):
 
