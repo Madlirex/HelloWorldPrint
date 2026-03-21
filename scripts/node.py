@@ -147,21 +147,33 @@ class ListNode(Node):
     def __init__(self, values: list[Node] = None) -> None:
         self.values: list[Node] = values or []
 
+    def accept(self, visitor):
+        return visitor.visit_list(self)
+
 class TupleNode(Node):
 
     def __init__(self, values: list[Node] = None) -> None:
         self.values: list[Node] = values or []
+
+    def accept(self, visitor):
+        return visitor.visit_tuple(self)
 
 class SetNode(Node):
 
     def __init__(self, values: list[Node] = None) -> None:
         self.values: list[Node] = values or []
 
+    def accept(self, visitor):
+        return visitor.visit_set(self)
+
 class DictionaryNode(Node):
 
     def __init__(self, keys: list[Node] = None, values: list[Node] = None) -> None:
         self.keys: list[Node] = keys or []
         self.values: list[Node] = values or []
+
+    def accept(self, visitor):
+        return visitor.visit_dict(self)
 
 class Boolean(Node):
 

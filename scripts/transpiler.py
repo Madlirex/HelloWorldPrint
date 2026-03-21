@@ -93,6 +93,8 @@ class Transpiler:
 
         return result
 
+    #region Simple keywords
+
     def visit_pass(self) -> str:
         return "pass"
 
@@ -104,6 +106,8 @@ class Transpiler:
 
     def visit_return(self, node: Return) -> str:
         return f"return {self.transpile(node.value)}"
+
+    #endregion
 
     #region Logical Expressions
 
@@ -124,6 +128,34 @@ class Transpiler:
 
     def visit_operation(self, node: Operation) -> str:
         return f"{self.transpile(node.left)} {node.operator} {self.transpile(node.right)}"
+
+    #endregion
+
+    #region Data Types
+
+    def visit_list(self, node: ListNode) -> str:
+        return f"[{self.transpile_nodes(node.values)}]"
+
+    def visit_tuple(self, node: TupleNode) -> str:
+        return f"({self.transpile_nodes(node.values)},)"
+
+    def visit_set(self, node: SetNode) -> str:
+        return "{" + self.transpile_nodes(node.values) + "}"
+
+    def visit_dict(self, node: DictionaryNode) -> str:
+
+        result: str = "{"
+
+        try:
+            for i in range(len(node.keys)):
+                result += f"{node.keys[i]}: {node.values[i]}, "
+        except IndexError:
+            raise ValueError(f"Not enough values to unpack from dictionary. There are more keys than values.")
+
+        result = result[:-2:] if result.endswith(", ") else result
+        result += "}"
+
+        return result
 
     #endregion
 
