@@ -88,6 +88,12 @@ class Transpiler:
     def visit_return(self, node: Return) -> str:
         return f"return {self.transpile(node.value)}"
 
+    def visit_yield(self, node: Yield) -> str:
+        return f"yield {self.transpile(node.value)}"
+
+    def visit_raise(self, node: Raise) -> str:
+        return f"raise {self.transpile(node.value)}"
+
     #endregion
 
     #region Logical Expressions

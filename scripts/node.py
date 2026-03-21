@@ -250,6 +250,9 @@ class Raise(Node):
     def __init__(self, value: Node) -> None:
         self.value: Node = value
 
+    def accept(self, visitor):
+        return visitor.visit_raise(self)
+
 class Break(Node):
 
     def accept(self, visitor):
@@ -269,6 +272,9 @@ class Yield(Node):
 
     def __init__(self, value: Node) -> None:
         self.value: Node = value
+
+    def accept(self, visitor):
+        return visitor.visit_yield(self)
 
 class MatchNode(Node):
 
