@@ -174,6 +174,25 @@ class Parser:
 
     #region Data Types
 
+    def parse_string(self) -> String:
+        return String(self.advance().value)
+
+    def parse_number(self) -> Number:
+        return Number(self.advance().value)
+
+    def parse_none(self) -> NoneNode:
+        self.consume_words(*SWAPPED_KEYWORDS['None'])
+        return NoneNode()
+
+    def parse_bool(self) -> Boolean:
+
+        if self.check_words(*SWAPPED_KEYWORDS['True']):
+            self.match_words(*SWAPPED_KEYWORDS['True'])
+            return Boolean(True)
+
+        self.match_words(*SWAPPED_KEYWORDS['False'])
+        return Boolean(False)
+
     def parse_variables(self) -> list[Variable]:
 
         nodes = [Variable(self.consume(TokenType.VALUE).value)]
@@ -189,6 +208,7 @@ class Parser:
     #region Advanced Keywords
 
     def parse_def(self) -> FunctionDef:
+        self.consume_words(*SWAPPED_KEYWORDS['def'])
 
         name = self.consume(TokenType.VALUE).value
         self.consume(TokenType.LPAREN)
