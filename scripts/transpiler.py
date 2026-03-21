@@ -229,6 +229,16 @@ class Transpiler:
         result += f"if {self.transpile(node.filter)}" if node.filter else ""
         return result
 
+    def visit_import(self, node: Import) -> str:
+
+        aliases = f" as {self.transpile_nodes(node.aliases)}" if node.aliases else ""
+        return f"import {self.transpile_nodes(node.modules)}{aliases}"
+
+    def visit_from_import(self, node: FromImport) -> str:
+
+        aliases = f" as {self.transpile_nodes(node.aliases)}" if node.aliases else ""
+        return f"from {self.transpile(node.path)} import {self.transpile_nodes(node.modules)}{aliases}"
+
     #endregion
 
     #endregion

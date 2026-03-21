@@ -228,16 +228,22 @@ class Slice(Node):
 
 class Import(Node):
 
-    def __init__(self, module: list[Variable], alias: list[Variable]= None) -> None:
-        self.module: list[Variable] = module
-        self.alias: list[Variable] = alias or []
+    def __init__(self, modules: list[Variable], aliases: list[Variable]= None) -> None:
+        self.modules: list[Variable] = modules
+        self.aliases: list[Variable] = aliases or []
+
+    def accept(self, visitor):
+        return visitor.visit_import(self)
 
 class FromImport(Node):
 
-    def __init__(self, path: Variable, module: list[Variable], alias: list[Variable] = None) -> None:
+    def __init__(self, path: Variable, modules: list[Variable], aliases: list[Variable] = None) -> None:
         self.path: Variable = path
-        self.module: list[Variable] = module
-        self.alias: list[Variable] = alias or []
+        self.modules: list[Variable] = modules
+        self.aliases: list[Variable] = aliases or []
+
+    def accept(self, visitor):
+        return visitor.visit_from_import(self)
 
 class Raise(Node):
 
