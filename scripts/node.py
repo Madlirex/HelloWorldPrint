@@ -212,6 +212,9 @@ class Index(Node):
         self.obj: Node = obj
         self.index: Node = index
 
+    def accept(self, visitor):
+        return visitor.visit_index(self)
+
 class Slice(Node):
 
     def __init__(self, obj: Node, start: Node | None = None, end: Node | None = None, step: Node | None = None) -> None:
@@ -219,6 +222,9 @@ class Slice(Node):
         self.start: Node | None = start
         self.end: Node | None = end
         self.step: Node | None = step
+
+    def accept(self, visitor):
+        return visitor.visit_slice(self)
 
 class Import(Node):
 

@@ -62,6 +62,16 @@ class Transpiler:
     def visit_call(self, node: Call) -> str:
         return f"{node.func}({self.transpile_nodes(node.args)})"
 
+    def visit_index(self, node: Index) -> str:
+        return f"{self.transpile(node.obj)}[{self.transpile(node.index)}]"
+
+    def visit_slice(self, node: Slice) -> str:
+
+        start = self.transpile(node.start) if node.start else ""
+        end = self.transpile(node.end) if node.end else ""
+        step = self.transpile(node.step) if node.step else ""
+        return f"{self.transpile(node.obj)}[{start}:{end}:{step}]"
+
     #endregion
 
     #region Simple Keywords
