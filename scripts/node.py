@@ -114,6 +114,9 @@ class Lambda(Node):
         self.params: list[Variable] = params
         self.body: Node = body
 
+    def accept(self, visitor):
+        return visitor.visit_lambda(self)
+
 class ForLoop(Node):
 
     def __init__(self, variable: list[Variable], expression: Node, body: Block, else_body: Block = None) -> None:

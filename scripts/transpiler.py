@@ -189,6 +189,9 @@ class Transpiler:
         result += self.visit_else(node.else_body)
         return result
 
+    def visit_lambda(self, node: Lambda) -> str:
+        return f"lambda {self.transpile_nodes(node.params)}: {self.transpile(node.body)}"
+
     #endregion
 
     #endregion
