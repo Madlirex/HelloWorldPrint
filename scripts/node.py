@@ -41,6 +41,8 @@ class Attribute(Node):
         self.obj: Node = obj
         self.name: str = name
 
+    def accept(self, visitor):
+        return visitor.visit_attribute(self)
 
 class Call(Node):
 
@@ -48,6 +50,8 @@ class Call(Node):
         self.func: Node = func
         self.args: list[Node] = args
 
+    def accept(self, visitor):
+        return visitor.visit_call(self)
 
 class Assignment(Node):
 

@@ -38,6 +38,8 @@ class Transpiler:
 
     #region Visits
 
+    #region Basics
+
     def visit_block(self, node: Block) -> str:
 
         result = ''
@@ -54,6 +56,13 @@ class Transpiler:
 
         return f"{self.transpile_nodes(node.left)} = {self.transpile_nodes(node.right)}"
 
+    def visit_attribute(self, node: Attribute) -> str:
+        return f"{self.transpile(node.obj)}.{node.name}"
+
+    def visit_call(self, node: Call) -> str:
+        return f"{node.func}({self.transpile_nodes(node.args)})"
+
+    #endregion
 
     #region Simple Keywords
 
