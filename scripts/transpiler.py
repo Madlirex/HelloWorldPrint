@@ -50,50 +50,12 @@ class Transpiler:
 
         return result
 
-    def visit_if(self, node: IfStatement) -> str:
-        result = f"if {self.transpile(node.condition)}:\n"
-
-        result += self.visit_block(node.body)
-
-        for elseif in node.elifs:
-            result += self.visit_elif(elseif)
-
-        result += self.visit_else(node.else_body)
-
-        return result
-
-    def visit_elif(self, node: tuple[Node, Block]) -> str:
-        return self.emit(f"elif {self.transpile(node[0])}:\n") + self.visit_block(node[1])
-
-    def visit_else(self, body: Block) -> str:
-        return self.emit("else:\n") + self.visit_block(body)
-
-    def visit_while(self, node: While) -> str:
-        result = f"while {self.transpile(node.condition)}:\n"
-
-        result += self.visit_block(node.body)
-
-        return result
-
     def visit_assignment(self, node: Assignment) -> str:
 
         return f"{self.transpile_nodes(node.left)} = {self.transpile_nodes(node.right)}"
 
-    def visit_class(self, node: ClassDef) -> str:
 
-        result = f"class {node.name}({self.transpile_nodes(node.parents)}):\n"
-        result += self.visit_block(node.body)
-
-        return result
-
-    def visit_function(self, node: FunctionDef) -> str:
-
-        result = f"def {node.name}({self.transpile_nodes(node.params)}):\n"
-        result += self.visit_block(node.body)
-
-        return result
-
-    #region Simple keywords
+    #region Simple Keywords
 
     def visit_pass(self) -> str:
         return "pass"
@@ -160,6 +122,49 @@ class Transpiler:
 
         result = result[:-2:] if result.endswith(", ") else result
         result += "}"
+
+        return result
+
+    #endregion
+
+    #region Advanced Keywords
+
+    def visit_if(self, node: IfStatement) -> str:
+        result = f"if {self.transpile(node.condition)}:\n"
+
+        result += self.visit_block(node.body)
+
+        for elseif in node.elifs:
+            result += self.visit_elif(elseif)
+
+        result += self.visit_else(node.else_body)
+
+        return result
+
+    def visit_elif(self, node: tuple[Node, Block]) -> str:
+        return self.emit(f"elif {self.transpile(node[0])}:\n") + self.visit_block(node[1])
+
+    def visit_else(self, body: Block) -> str:
+        return self.emit("else:\n") + self.visit_block(body)
+
+    def visit_while(self, node: While) -> str:
+        result = f"while {self.transpile(node.condition)}:\n"
+
+        result += self.visit_block(node.body)
+
+        return result
+
+    def visit_class(self, node: ClassDef) -> str:
+
+        result = f"class {node.name}({self.transpile_nodes(node.parents)}):\n"
+        result += self.visit_block(node.body)
+
+        return result
+
+    def visit_function(self, node: FunctionDef) -> str:
+
+        result = f"def {node.name}({self.transpile_nodes(node.params)}):\n"
+        result += self.visit_block(node.body)
 
         return result
 

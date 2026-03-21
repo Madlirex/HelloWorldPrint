@@ -97,6 +97,9 @@ class While(Node):
         self.condition: Node = condition
         self.body: Block = body
 
+    def accept(self, visitor):
+        return visitor.visit_while(self)
+
 class TryExcept(Node):
 
     def __init__(self, body: Block, excepts: list[tuple[Node, Block]] = None) -> None:
