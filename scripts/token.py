@@ -51,7 +51,7 @@ class Token:
 
     def __init__(self, token_type: TokenType, value: str | int = "") -> None:
         self.token_type: TokenType = token_type
-        self.value: str | int = value
+        self.value: str | int | float = value
 
     def __repr__(self) -> str:
         return f"{self.token_type.name}: {self.value}"

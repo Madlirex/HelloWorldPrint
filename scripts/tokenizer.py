@@ -173,11 +173,16 @@ class Tokenizer:
     def read_number(self) -> Token:
 
         num = ""
+        is_decimal = False
 
-        while self.peek() and self.peek().isdigit():
+        while self.peek() and (self.peek().isdigit() or self.peek() == "."):
+            if self.peek() == ".":
+                if is_decimal:
+                    break
+                is_decimal = True
             num += self.advance()
 
-        return Token(TokenType.NUMBER, int(num))
+        return Token(TokenType.NUMBER, int(num) if not is_decimal else float(num))
 
     def read_identifier(self) -> Token:
 
