@@ -122,6 +122,9 @@ class ForLoop(Node):
         self.body: Block = body
         self.else_body: Block = else_body or Block([Pass()])
 
+    def accept(self, visitor):
+        return visitor.visit_for(self)
+
 class ClassDef(Node):
 
     def __init__(self, name: str, body: Block, parents: list[Node] = None) -> None:

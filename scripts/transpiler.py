@@ -182,6 +182,13 @@ class Transpiler:
         result += self.visit_block(node[1])
         return result
 
+    def visit_for(self, node: ForLoop) -> str:
+
+        result = f"for {self.transpile_nodes(node.variable)} in {self.transpile(node.expression)}:\n"
+        result += self.visit_block(node.body)
+        result += self.visit_else(node.else_body)
+        return result
+
     #endregion
 
     #endregion
