@@ -245,6 +245,16 @@ class Transpiler:
         aliases = f" as {self.transpile_nodes(node.aliases)}" if node.aliases else ""
         return f"from {self.transpile(node.path)} import {self.transpile_nodes(node.modules)}{aliases}"
 
+    # noinspection PyArgumentList
+    def visit_match(self, node: MatchNode) -> str:
+
+        result = f"match {self.transpile(node.variable)}:\n"
+        with self.indented():
+            for case_node in node.values:
+                result += self.emit(f"case {self.transpile(case_node[0])}:\n") + self.visit_block(case_node[1])
+
+        return result
+
     #endregion
 
     #endregion

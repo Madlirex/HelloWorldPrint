@@ -282,6 +282,9 @@ class MatchNode(Node):
         self.variable: Node = variable
         self.values: list[tuple[Node, Block]] = values
 
+    def accept(self, visitor):
+        return visitor.visit_match(self)
+
 class AndNode(Node):
 
     def __init__(self, left: Node, right: Node) -> None:
