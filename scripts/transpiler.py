@@ -101,6 +101,15 @@ class Transpiler:
     def visit_bool(self, node: Boolean) -> str:
         return str(node.value)
 
+    def visit_number(self, node: Number) -> str:
+        return str(node.value)
+
+    def visit_string(self, node: String) -> str:
+        return node.value
+
+    def visit_variable(self, node: Variable) -> str:
+        return node.name
+
     def visit_list(self, node: ListNode) -> str:
         return f"[{self.transpile_nodes(node.values)}]"
 

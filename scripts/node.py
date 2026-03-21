@@ -17,17 +17,15 @@ class Variable(Node):
         self.name: str = name
 
     def accept(self, visitor):
-        return self.name
-
+        return visitor.visit_variable(self)
 
 class Number(Node):
 
-    def __init__(self, value: int) -> None:
-        self.value: int = value
+    def __init__(self, value: int | float) -> None:
+        self.value: int | float = value
 
     def accept(self, visitor):
-        return self.value
-
+        return visitor.visit_number(self)
 
 class String(Node):
 
@@ -35,8 +33,7 @@ class String(Node):
         self.value: str = value
 
     def accept(self, visitor):
-        return self.value
-
+        return visitor.visit_string(self)
 
 class Attribute(Node):
 
