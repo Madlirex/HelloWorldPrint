@@ -120,6 +120,10 @@ class Parser:
 
     #endregion
 
+    #region Parsing
+
+    #region Basics
+
     def parse_program(self) -> Program:
 
         program = Program(self.parse_block())
@@ -157,6 +161,41 @@ class Parser:
 
     def parse_expression(self) -> Node:
         pass
+
+    #endregion
+
+    #region Simple Keywords
+
+    #endregion
+
+    #region Logical Operators
+
+    #endregion
+
+    #region Data Types
+
+    def parse_variables(self) -> list[Variable]:
+
+        nodes = [Variable(self.consume(TokenType.VALUE).value)]
+
+        while self.check(TokenType.COMMA):
+            self.consume(TokenType.COMMA)
+            nodes.append(Variable(self.consume(TokenType.VALUE).value))
+
+        return nodes
+
+    #endregion
+
+    #region Advanced Keywords
+
+    def parse_def(self) -> FunctionDef:
+
+        name = self.consume(TokenType.VALUE).value
+        self.consume(TokenType.LPAREN)
+        params = self.parse_params()
+
+        body = self.parse_block()
+        return FunctionDef(name, body, params)
 
     def parse_if(self) -> IfStatement:
         self.consume_words(*SWAPPED_KEYWORDS['if'])
@@ -206,28 +245,6 @@ class Parser:
 
         return ForLoop(variable, expression, body, self.parse_else())
 
-    def parse_variables(self) -> list[Variable]:
-
-        nodes = [Variable(self.consume(TokenType.VALUE).value)]
-
-        while self.check(TokenType.COMMA):
-            self.consume(TokenType.COMMA)
-            nodes.append(Variable(self.consume(TokenType.VALUE).value))
-
-        return nodes
-
-    def parse_def(self) -> FunctionDef:
-
-        name = self.consume(TokenType.VALUE).value
-        self.consume(TokenType.LPAREN)
-        params = self.parse_params()
-
-        body = self.parse_block()
-        return FunctionDef(name, body, params)
-
-    def parse_params(self) -> list[Node]:
-        pass
-
     def parse_class(self) -> ClassDef:
 
         name = self.consume(TokenType.VALUE).value
@@ -237,8 +254,19 @@ class Parser:
         body = self.parse_block()
         return ClassDef(name, body, parents)
 
+    #endregion
+
+    #region Miscellaneous
+
+    def parse_params(self) -> list[Node]:
+        pass
+
     def parse_parents(self) -> list[Node]:
         pass
+
+    #endregion
+
+    #endregion
 
 code = open("../tests/helloworld.print", 'r', encoding='utf8').read()
 
