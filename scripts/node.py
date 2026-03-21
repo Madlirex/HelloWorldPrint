@@ -147,6 +147,9 @@ class TernaryOp(Node):
         self.value1: Node = value1
         self.value2: Node = value2
 
+    def accept(self, visitor):
+        return visitor.visit_ternary(self)
+
 class ListComprehension(Node):
 
     def __init__(self, variable: list[Variable], expression: Node, body: list[Node] = None, filter_condition: Node | None = None) -> None:
@@ -154,6 +157,9 @@ class ListComprehension(Node):
         self.variable: list[Variable] = variable
         self.expression: Node = expression
         self.filter: Node | None = filter_condition
+
+    def accept(self, visitor):
+        return visitor.visit_list_comp(self)
 
 class ListNode(Node):
 

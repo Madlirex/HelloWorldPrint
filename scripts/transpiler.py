@@ -210,6 +210,15 @@ class Transpiler:
     def visit_lambda(self, node: Lambda) -> str:
         return f"lambda {self.transpile_nodes(node.params)}: {self.transpile(node.body)}"
 
+    def visit_ternary(self, node: TernaryOp) -> str:
+        return f"{self.transpile(node.value1)} if {self.transpile(node.condition)} else {self.transpile(node.value2)}"
+
+    def visit_list_comp(self, node: ListComprehension) -> str:
+
+        result = f"{self.transpile_nodes(node.body)} for {self.transpile_nodes(node.variable)} in {self.transpile(node.expression)}"
+        result += f"if {self.transpile(node.filter)}" if node.filter else ""
+        return result
+
     #endregion
 
     #endregion
