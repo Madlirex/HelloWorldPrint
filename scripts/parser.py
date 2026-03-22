@@ -101,10 +101,10 @@ class Parser:
 
     #region Keyword Helpers
 
-    def peek_keyword(self) -> str | None:
+    def peek_keyword(self, tokens: list[Token]) -> str | None:
 
         for words, replacement in KEYWORDS_LIST:
-            if self.check_words(*words):
+            if self.check_words(tokens, *words):
                 return replacement
 
         return None
@@ -133,15 +133,20 @@ class Parser:
 
         return program
 
-    def parse_line(self, line: list[Node]) -> Node:
-        kw = self.peek_keyword()
+    def parse_line(self, line: list[Token]) -> Node:
+        kw = self.peek_keyword(line)
 
         if kw == "if":
             return self.parse_if()
         if kw == "while":
             return self.parse_while()
 
-
+        is_function = False
+        for tok in line[::-1]:
+            if tok.token_type == TokenType.EQUAL or tok.token_type == TokenType.EQUAL_OPERATOR:
+                return self.parse_assignment(line)
+            if tok.token_type == TokenType.RPAREN:
+                return self.parse_function(line)
 
         raise NotImplementedError(f"Not implemented for {line}")
 
@@ -150,15 +155,14 @@ class Parser:
         self.skip_redundant_newlines()
 
         nodes = []
-        indent = self.peek().value
-
+        indent = self.peek().value if self.peek().token_type == TokenType.INDENT else self.peek(1).value
         while self.peek(1).value == indent and not self.is_at_end():
             self.advance()
             self.advance()
 
             token_buffer = []
 
-            while not self.peek(1).token_type == TokenType.NEWLINE:
+            while not self.peek().token_type == TokenType.NEWLINE:
                 token_buffer.append(self.advance())
 
             nodes.append(self.parse_line(token_buffer))
@@ -167,15 +171,28 @@ class Parser:
 
         return Block(nodes)
 
-    def parse_expression(self, tokens: list[Token]) -> Node:
+    def parse_assignment(self, tokens: list[Token]) -> Assignment:
 
-        can_be_tuple = False
+        left = []
+        right = []
+        op = ""
 
-        if tokens[0].token_type == TokenType.LBRACKET:
-            values = self.parse_list(tokens[1:-1])
+        for i in reversed(range(len(tokens))):
+            if tokens[i].token_type == TokenType.EQUAL_OPERATOR or tokens[i].token_type == TokenType.EQUAL:
+                op = tokens[i].value
+                left = self.parse_list(tokens[0:i])
+                right = self.parse_list(tokens[i+1:])
 
+        return Assignment(right, left, op)
 
+    def parse_function(self, tokens: list[Token]) -> Call:
 
+        name = self.parse_token([tokens[-2]])
+        args = []
+        for arg in tokens:
+            pass
+
+        return Call()
 
     #endregion
 
@@ -216,7 +233,7 @@ class Parser:
         if bracket in "()":
             return TupleNode(self.parse_list(values, sep))
 
-        raise NotImplementedError("wohoo")
+        raise NotImplementedError("Not implemented list type")
 
     def parse_braces(self, tokens: list[Token], sep: str = ",") -> Node:
         pass
@@ -226,13 +243,13 @@ class Parser:
         open_brackets = []
         token_buffer: list[Token] = []
         result = []
-
         for token in values:
-            if token.token_type == TokenType.is_opening_bracket:
+            if token.token_type.is_opening_bracket:
                 open_brackets += token.value
                 token_buffer.append(token)
 
             if not open_brackets:
+                print(token)
                 if token.value == sep:
                     result.append(self.parse_token(token_buffer))
                 else:
@@ -255,7 +272,11 @@ class Parser:
 
     #region Advanced Keywords
 
+    def parse_if(self) -> IfStatement:
+        pass
 
+    def parse_while(self) -> While:
+        pass
 
     #endregion
 
@@ -284,3 +305,5 @@ ast = parser.parse_program()
 
 print("\nAST:")
 print(ast.block.nodes)
+print(ast.block.nodes[0].__dict__)
+print(ast.block.nodes[0].right[0].__dict__)
