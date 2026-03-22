@@ -180,19 +180,17 @@ class Parser:
         for i in reversed(range(len(tokens))):
             if tokens[i].token_type == TokenType.EQUAL_OPERATOR or tokens[i].token_type == TokenType.EQUAL:
                 op = tokens[i].value
-                left = self.parse_list(tokens[0:i])
-                right = self.parse_list(tokens[i+1:])
+                left = [self.parse_token(tokens[0:i])]
+                right = [self.parse_token(tokens[i+1:])]
 
         return Assignment(right, left, op)
 
     def parse_function(self, tokens: list[Token]) -> Call:
 
         name = self.parse_token([tokens[-2]])
-        args = []
-        for arg in tokens:
-            pass
+        args = Variable(" ".join(i.value for i in tokens[:-3:]))
 
-        return Call()
+        return Call(name, [args])
 
     #endregion
 
@@ -221,6 +219,8 @@ class Parser:
                 return Number(tokens[0].value)
             if tokens[0].token_type == TokenType.VALUE:
                 return Variable(tokens[0].value)
+        if tokens[-1].token_type == TokenType.RPAREN:
+            return self.parse_function(tokens)
 
         raise Exception(f"Unexpected tokens: {tokens}")
 
@@ -244,12 +244,12 @@ class Parser:
         token_buffer: list[Token] = []
         result = []
         for token in values:
+            print(token_buffer)
             if token.token_type.is_opening_bracket:
                 open_brackets += token.value
                 token_buffer.append(token)
 
             if not open_brackets:
-                print(token)
                 if token.value == sep:
                     result.append(self.parse_token(token_buffer))
                 else:
@@ -264,7 +264,7 @@ class Parser:
                         raise Exception("Unclosed bracket.")
                 else:
                     token_buffer.append(token)
-
+        result.append(self.parse_token(token_buffer))
         return result
 
 
@@ -305,5 +305,3 @@ ast = parser.parse_program()
 
 print("\nAST:")
 print(ast.block.nodes)
-print(ast.block.nodes[0].__dict__)
-print(ast.block.nodes[0].right[0].__dict__)
