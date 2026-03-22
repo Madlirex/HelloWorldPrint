@@ -115,7 +115,7 @@ class Tokenizer:
             raise Exception(f"Unclosed brackets: {", ".join(self.open_brackets)}")
 
         self.tokens.append(Token(TokenType.EOF))
-        return self.tokens
+        return self.tokens.copy()
 
     def read_operator(self) -> Token:
         operation = self.advance()

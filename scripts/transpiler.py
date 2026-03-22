@@ -271,7 +271,7 @@ pr.block = Block([IfStatement(Variable("Hi"), Block([Assignment([Variable("Hi")]
 pr.block = Block([FunctionDef("SampleFunction", pr.block, [Variable("Fucker"), Variable("sucker")])])
 pr.block = Block([ClassDef("SampleClass", pr.block)])
 
-with open("../tests/helloworld.print", 'r') as f:
+with open("../tests/helloworld.print", 'r', encoding='utf8') as f:
     code = f.read()
 
 tokenizer = Tokenizer(code)

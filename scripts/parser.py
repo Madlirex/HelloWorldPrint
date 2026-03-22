@@ -72,7 +72,7 @@ class Parser:
     def check_words(self, tokens: list[Token], *words: str) -> bool:
 
         for i, word in enumerate(words):
-            tok = tokens[i]
+            tok = tokens[i] if i >= 0 else None
 
             if tok is None:
                 return False
@@ -137,7 +137,7 @@ class Parser:
         kw = self.peek_keyword(line)
 
         if kw == "if":
-            return self.parse_if()
+            return self.parse_if(line)
         if kw == "while":
             return self.parse_while()
 
@@ -151,21 +151,24 @@ class Parser:
         raise NotImplementedError(f"Not implemented for {line}")
 
     def parse_block(self) -> Block:
-
         self.skip_redundant_newlines()
 
         nodes = []
         indent = self.peek().value if self.peek().token_type == TokenType.INDENT else self.peek(1).value
-        while self.peek(1).value == indent and not self.is_at_end():
+        while not self.is_at_end() and self.peek(1).value == indent:
             self.advance()
             self.advance()
 
-            token_buffer = []
+            token_buffer: list[Token] = []
 
-            while not self.peek().token_type == TokenType.NEWLINE:
+            while not self.is_at_end() and not self.peek().token_type == TokenType.NEWLINE:
+                print(self.peek())
                 token_buffer.append(self.advance())
+                if token_buffer[-1].token_type == TokenType.COMMENT:
+                    token_buffer.pop()
 
-            nodes.append(self.parse_line(token_buffer))
+            if token_buffer:
+                nodes.append(self.parse_line(token_buffer))
 
             self.skip_redundant_newlines()
 
@@ -206,19 +209,21 @@ class Parser:
 
     def parse_token(self, tokens: list[Token]) -> Node:
 
-        if self.check_words(tokens, *SWAPPED_KEYWORDS['None']):
-            return NoneNode()
-        if self.check_words(tokens, *SWAPPED_KEYWORDS['True']):
-            return Boolean(True)
-        if self.check_words(tokens, *SWAPPED_KEYWORDS['False']):
-            return Boolean(False)
         if len(tokens) == 1:
+            if self.check_words(tokens, *SWAPPED_KEYWORDS['None']):
+                return NoneNode()
+            if self.check_words(tokens, *SWAPPED_KEYWORDS['True']):
+                return Boolean(True)
+            if self.check_words(tokens, *SWAPPED_KEYWORDS['False']):
+                return Boolean(False)
+
             if tokens[0].token_type == TokenType.STRING:
                 return String(tokens[0].value)
             if tokens[0].token_type == TokenType.NUMBER:
                 return Number(tokens[0].value)
             if tokens[0].token_type == TokenType.VALUE:
                 return Variable(tokens[0].value)
+
         if tokens[-1].token_type == TokenType.RPAREN:
             return self.parse_function(tokens)
 
@@ -272,8 +277,13 @@ class Parser:
 
     #region Advanced Keywords
 
-    def parse_if(self) -> IfStatement:
-        pass
+    def parse_if(self, tokens: list[Token]) -> IfStatement:
+        self.consume_words(tokens, *SWAPPED_KEYWORDS['if'])
+
+        if tokens[-1].token_type != TokenType.QUESTION:
+            raise SyntaxError("Invalid syntax you illiterate swine")
+
+        return IfStatement(self.parse_token(tokens[len(SWAPPED_KEYWORDS['if']):-1:]), self.parse_block())
 
     def parse_while(self) -> While:
         pass
@@ -291,7 +301,7 @@ class Parser:
     #endregion
 
     #endregion
-
+"""
 code = open("../tests/helloworld.print", 'r', encoding='utf8').read()
 
 tokens = Tokenizer(code).tokenize()
@@ -305,3 +315,4 @@ ast = parser.parse_program()
 
 print("\nAST:")
 print(ast.block.nodes)
+"""

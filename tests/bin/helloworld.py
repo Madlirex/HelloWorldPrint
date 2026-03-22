@@ -1,5 +1,2 @@
-
-
-čo ak
-nič x: x*x
-print(x)
+meno = input("Ako sa volas?")
+print(f"{x} je pekne meno")
