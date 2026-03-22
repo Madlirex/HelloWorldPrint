@@ -63,7 +63,8 @@ class Tokenizer:
                 continue
 
             if char == ";":
-                self.tokens.append(self.read_semicolon())
+                self.tokens.append(Token(TokenType.COLON, char))
+                self.advance()
                 continue
 
             if char == ".":
@@ -115,11 +116,6 @@ class Tokenizer:
 
         self.tokens.append(Token(TokenType.EOF))
         return self.tokens
-
-    def read_semicolon(self) -> Token:
-        self.tokens.append(Token(TokenType.INDENT, self.curr_indent))
-        self.advance()
-        return Token(TokenType.NEWLINE, "\n")
 
     def read_operator(self) -> Token:
         operation = self.advance()
