@@ -1,5 +1,7 @@
 from contextlib import contextmanager
 
+from tokenizer import Tokenizer
+from parser import Parser
 from node import *
 
 
@@ -60,7 +62,7 @@ class Transpiler:
         return f"{self.transpile(node.obj)}.{node.name}"
 
     def visit_call(self, node: Call) -> str:
-        return f"{node.func}({self.transpile_nodes(node.args)})"
+        return f"{self.transpile(node.func)}({self.transpile_nodes(node.args)})"
 
     def visit_index(self, node: Index) -> str:
         return f"{self.transpile(node.obj)}[{self.transpile(node.index)}]"
@@ -263,8 +265,18 @@ class Transpiler:
     #endregion
 
 pr = Program()
+
+
 pr.block = Block([IfStatement(Variable("Hi"), Block([Assignment([Variable("Hi")], [String("Hello")])])), Assignment([Variable("Hi")], [String("Hello")])])
 pr.block = Block([FunctionDef("SampleFunction", pr.block, [Variable("Fucker"), Variable("sucker")])])
 pr.block = Block([ClassDef("SampleClass", pr.block)])
-trans = Transpiler(pr)
+
+with open("../tests/helloworld.print", 'r') as f:
+    code = f.read()
+
+tokenizer = Tokenizer(code)
+parser = Parser(tokenizer.tokenize())
+
+trans = Transpiler(parser.parse_program())
+print("------------------------------------ RESULT ------------------------------------")
 print(trans.transpile_program())
