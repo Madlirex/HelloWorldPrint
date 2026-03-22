@@ -46,6 +46,12 @@ class TokenType(Enum):
             TokenType.NEWLINE, TokenType.INDENT
         }
 
+    @property
+    def is_opening_bracket(self) -> bool:
+        return self in {
+            TokenType.LBRACKET, TokenType.LBRACE, TokenType.LPAREN
+        }
+
 
 class Token:
 

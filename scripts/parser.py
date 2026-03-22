@@ -1,8 +1,10 @@
-from scripts.constants import KEYWORDS_LIST, FLAT_KEYWORD_FUNCTIONS, KEYWORDS, SWAPPED_KEYWORDS
+from scripts.constants import KEYWORDS_LIST, FLAT_KEYWORD_FUNCTIONS, KEYWORDS, SWAPPED_KEYWORDS, BRACKETS, BRACKET_PAIRS
 from token import TokenType, Token
 from tokenizer import Tokenizer
 from node import *
 
+
+# noinspection PyShadowingNames
 class Parser:
 
     def __init__(self, tokenized_code: list[Token]) -> None:
@@ -11,6 +13,10 @@ class Parser:
 
     #region Helpers
     #region Basic Helpers
+
+    @staticmethod
+    def reverse_sep(sep: str) -> str:
+        return "," if sep == ";" else ";"
 
     def peek(self, x: int = 0) -> Token | None:
         pos = self.pos + x
@@ -63,10 +69,10 @@ class Parser:
 
     #region Words Helpers
 
-    def check_words(self, *words: str) -> bool:
+    def check_words(self, tokens: list[Token], *words: str) -> bool:
 
         for i, word in enumerate(words):
-            tok = self.peek(i)
+            tok = tokens[i]
 
             if tok is None:
                 return False
@@ -79,20 +85,17 @@ class Parser:
 
         return True
 
-    def match_words(self, *words: str) -> bool:
+    def match_words(self, tokens: list[Token], *words: str) -> bool:
 
-        if not self.check_words(*words):
+        if not self.check_words(tokens, *words):
             return False
-
-        for _ in words:
-            self.advance()
 
         return True
 
-    def consume_words(self, *words: str) -> None:
+    def consume_words(self, tokens: list[Token], *words: str) -> None:
 
-        if not self.match_words(*words):
-            raise SyntaxError(f"Expected {' '.join(words)}, got {self.peek().value}")
+        if not self.match_words(tokens, *words):
+            raise SyntaxError(f"Expected {' '.join(words)}, got {tokens}")
 
     #endregion
 
@@ -130,17 +133,17 @@ class Parser:
 
         return program
 
-    def parse(self) -> Node:
-
-        if self.peek().token_type == TokenType.INDENT:
-            self.advance()
-
+    def parse_line(self, line: list[Node]) -> Node:
         kw = self.peek_keyword()
 
         if kw == "if":
             return self.parse_if()
+        if kw == "while":
+            return self.parse_while()
 
-        return self.parse_expression()
+
+
+        raise NotImplementedError(f"Not implemented for {line}")
 
     def parse_block(self) -> Block:
 
@@ -153,14 +156,26 @@ class Parser:
             self.advance()
             self.advance()
 
-            nodes.append(self.parse())
+            token_buffer = []
+
+            while not self.peek(1).token_type == TokenType.NEWLINE:
+                token_buffer.append(self.advance())
+
+            nodes.append(self.parse_line(token_buffer))
 
             self.skip_redundant_newlines()
 
         return Block(nodes)
 
-    def parse_expression(self) -> Node:
-        pass
+    def parse_expression(self, tokens: list[Token]) -> Node:
+
+        can_be_tuple = False
+
+        if tokens[0].token_type == TokenType.LBRACKET:
+            values = self.parse_list(tokens[1:-1])
+
+
+
 
     #endregion
 
@@ -174,105 +189,73 @@ class Parser:
 
     #region Data Types
 
-    def parse_string(self) -> String:
-        return String(self.advance().value)
+    def parse_token(self, tokens: list[Token]) -> Node:
 
-    def parse_number(self) -> Number:
-        return Number(self.advance().value)
-
-    def parse_none(self) -> NoneNode:
-        self.consume_words(*SWAPPED_KEYWORDS['None'])
-        return NoneNode()
-
-    def parse_bool(self) -> Boolean:
-
-        if self.check_words(*SWAPPED_KEYWORDS['True']):
-            self.match_words(*SWAPPED_KEYWORDS['True'])
+        if self.check_words(tokens, *SWAPPED_KEYWORDS['None']):
+            return NoneNode()
+        if self.check_words(tokens, *SWAPPED_KEYWORDS['True']):
             return Boolean(True)
+        if self.check_words(tokens, *SWAPPED_KEYWORDS['False']):
+            return Boolean(False)
+        if len(tokens) == 1:
+            if tokens[0].token_type == TokenType.STRING:
+                return String(tokens[0].value)
+            if tokens[0].token_type == TokenType.NUMBER:
+                return Number(tokens[0].value)
+            if tokens[0].token_type == TokenType.VALUE:
+                return Variable(tokens[0].value)
 
-        self.match_words(*SWAPPED_KEYWORDS['False'])
-        return Boolean(False)
+        raise Exception(f"Unexpected tokens: {tokens}")
 
-    def parse_variables(self) -> list[Variable]:
+    def parse_list_type(self, values: list[Token], sep: str = ",", bracket: str = "[") -> Node:
+        sep = self.reverse_sep(sep)
+        if bracket in "{}":
+            return self.parse_braces(values, sep)
+        if bracket in "[]":
+            return ListNode(self.parse_list(values, sep))
+        if bracket in "()":
+            return TupleNode(self.parse_list(values, sep))
 
-        nodes = [Variable(self.consume(TokenType.VALUE).value)]
+        raise NotImplementedError("wohoo")
 
-        while self.check(TokenType.COMMA):
-            self.consume(TokenType.COMMA)
-            nodes.append(Variable(self.consume(TokenType.VALUE).value))
+    def parse_braces(self, tokens: list[Token], sep: str = ",") -> Node:
+        pass
 
-        return nodes
+    def parse_list(self, values: list[Token], sep: str = ",") -> list[Node]:
+
+        open_brackets = []
+        token_buffer: list[Token] = []
+        result = []
+
+        for token in values:
+            if token.token_type == TokenType.is_opening_bracket:
+                open_brackets += token.value
+                token_buffer.append(token)
+
+            if not open_brackets:
+                if token.value == sep:
+                    result.append(self.parse_token(token_buffer))
+                else:
+                    token_buffer.append(token)
+            else:
+                if token.value in BRACKET_PAIRS:
+                    if BRACKET_PAIRS[token.value] == open_brackets[-1]:
+                        open_brackets.pop()
+                        if not open_brackets:
+                            result.append(self.parse_list_type(token_buffer, sep, token.value))
+                    else:
+                        raise Exception("Unclosed bracket.")
+                else:
+                    token_buffer.append(token)
+
+        return result
+
 
     #endregion
 
     #region Advanced Keywords
 
-    def parse_def(self) -> FunctionDef:
-        self.consume_words(*SWAPPED_KEYWORDS['def'])
 
-        name = self.consume(TokenType.VALUE).value
-        self.consume(TokenType.LPAREN)
-        params = self.parse_params()
-
-        body = self.parse_block()
-        return FunctionDef(name, body, params)
-
-    def parse_if(self) -> IfStatement:
-        self.consume_words(*SWAPPED_KEYWORDS['if'])
-
-        condition = self.parse_expression()
-        self.consume(TokenType.QUESTION)
-        body = self.parse_block()
-
-        elifs = []
-        is_elif = self.check_words(*SWAPPED_KEYWORDS['elif'])
-
-        while is_elif:
-            self.consume_words(*SWAPPED_KEYWORDS['elif'])
-            cond = self.parse_expression()
-            self.consume(TokenType.QUESTION)
-            elifs.append((cond, self.parse_block()))
-
-        return IfStatement(condition, body, elifs, self.parse_else())
-
-    def parse_else(self) -> list[Node] | None:
-        body = None
-        if self.check_words(*SWAPPED_KEYWORDS['else']):
-            self.consume_words(*SWAPPED_KEYWORDS['else'])
-            self.consume(TokenType.EXCLAMAITON)
-            body = self.parse_block()
-        return body
-
-    def parse_while(self) -> While:
-        self.consume_words(*SWAPPED_KEYWORDS['while'])
-
-        condition = self.parse_expression()
-        self.consume(TokenType.EXCLAMAITON)
-        body = self.parse_block()
-
-        return While(condition, body)
-
-    def parse_for(self) -> ForLoop:
-        self.consume_words(*SWAPPED_KEYWORDS['for'])
-
-        variable = self.parse_variables()
-
-        self.consume_words(*SWAPPED_KEYWORDS['in'])
-
-        expression = self.parse_expression()
-        self.consume(TokenType.EXCLAMAITON)
-        body = self.parse_block()
-
-        return ForLoop(variable, expression, body, self.parse_else())
-
-    def parse_class(self) -> ClassDef:
-
-        name = self.consume(TokenType.VALUE).value
-        self.consume(TokenType.LPAREN)
-        parents = self.parse_parents()
-
-        body = self.parse_block()
-        return ClassDef(name, body, parents)
 
     #endregion
 
