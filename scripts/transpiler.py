@@ -159,6 +159,9 @@ class Transpiler:
 
         return result
 
+    def visit_keyarg(self, node: KeyArg) -> str:
+        return f"{self.transpile(node.variable)} = {self.transpile(node.value)}"
+
     #endregion
 
     #region Advanced Keywords

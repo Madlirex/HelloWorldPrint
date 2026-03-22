@@ -339,6 +339,15 @@ class IsNode(Node):
     def accept(self, visitor):
         return visitor.visit_is(self)
 
+class KeyArg(Node):
+
+    def __init__(self, variable: Variable, value: Node) -> None:
+        self.variable: Node = variable
+        self.value: Node = value
+
+    def accept(self, visitor):
+        return visitor.visit_keyarg(self)
+
 class Program(Node):
 
     def __init__(self, block: Block = None) -> None:
