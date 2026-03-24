@@ -1,2 +1,2 @@
-"Ako sa volas?"(input) = meno
-f"{x} je pekne meno"(print)
+"Ako sa volas?"('input') = meno
+"{meno} je pekne meno"(f'print')

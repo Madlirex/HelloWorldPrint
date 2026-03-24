@@ -205,6 +205,7 @@ class Tokenizer:
         if self.peek() == '"' and self.peek(1) == '"' and self.peek(2) == '"':
             return self.read_multi_comment()
 
+        prefix = self.peek(-1)
         value = self.advance()
         self.curr_quotes = value
 
@@ -212,6 +213,9 @@ class Tokenizer:
             value += self.advance()
 
         value += self.advance()
+        if prefix and prefix.isalpha():
+            value = prefix + value
+            self.tokens.pop()
 
         return Token(TokenType.STRING, value)
 

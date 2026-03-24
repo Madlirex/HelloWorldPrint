@@ -62,6 +62,11 @@ class Transpiler:
         return f"{self.transpile(node.obj)}.{node.name}"
 
     def visit_call(self, node: Call) -> str:
+        if isinstance(node.func, String):
+            quotes = node.func.value[-1]
+            prefix = node.func.value[0] if quotes != node.func.value[0] else ""
+            return f"{node.func.value[len(prefix)+1:-1]}({prefix}{quotes}{self.transpile_nodes(node.args)}{quotes})"
+
         return f"{self.transpile(node.func)}({self.transpile_nodes(node.args)})"
 
     def visit_index(self, node: Index) -> str:
