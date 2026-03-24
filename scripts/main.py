@@ -1,4 +1,6 @@
+from transpiler import Transpiler
 from parser import Parser
+from tokenizer import Tokenizer
 import subprocess
 import sys
 import os
@@ -21,11 +23,16 @@ class Compiler:
 
         with open(path, encoding=Compiler.ENCODING) as f:
             code = f.read()
-            parsed_code, files = Parser.parse_code(code)
+            tokenizer = Tokenizer(code)
+            tokens = tokenizer.tokenize()
+            parser = Parser(tokens)
+            ast = parser.parse_program()
+            trans = Transpiler(ast)
+            compiled_code = trans.transpile_program()
 
         name = Compiler.get_basename(path) + ".py"
         root = Compiler.get_directory(path) if not root else root
-
+        files = []
         for f in files:
             Compiler.compile_code(f, root)
 
@@ -33,7 +40,7 @@ class Compiler:
         Compiler.create_dir(folder)
         Compiler.create_file(folder + name)
         with open(folder + name, 'w', encoding=Compiler.ENCODING) as f:
-            f.write(parsed_code)
+            f.write(compiled_code)
 
     @staticmethod
     def create_file(path: str) -> None:

@@ -269,19 +269,21 @@ class Transpiler:
 
     #endregion
 
-pr = Program()
+if __name__ == "__main__":
+
+    pr = Program()
 
 
-pr.block = Block([IfStatement(Variable("Hi"), Block([Assignment([Variable("Hi")], [String("Hello")])])), Assignment([Variable("Hi")], [String("Hello")])])
-pr.block = Block([FunctionDef("SampleFunction", pr.block, [Variable("Fucker"), Variable("sucker")])])
-pr.block = Block([ClassDef("SampleClass", pr.block)])
+    pr.block = Block([IfStatement(Variable("Hi"), Block([Assignment([Variable("Hi")], [String("Hello")])])), Assignment([Variable("Hi")], [String("Hello")])])
+    pr.block = Block([FunctionDef("SampleFunction", pr.block, [Variable("Fucker"), Variable("sucker")])])
+    pr.block = Block([ClassDef("SampleClass", pr.block)])
 
-with open("../tests/helloworld.print", 'r', encoding='utf8') as f:
-    code = f.read()
+    with open("../tests/helloworld.print", 'r', encoding='utf8') as f:
+        code = f.read()
 
-tokenizer = Tokenizer(code)
-parser = Parser(tokenizer.tokenize())
+    tokenizer = Tokenizer(code)
+    parser = Parser(tokenizer.tokenize())
 
-trans = Transpiler(parser.parse_program())
-print("------------------------------------ RESULT ------------------------------------")
-print(trans.transpile_program())
+    trans = Transpiler(parser.parse_program())
+    print("------------------------------------ RESULT ------------------------------------")
+    print(trans.transpile_program())

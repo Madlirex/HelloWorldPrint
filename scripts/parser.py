@@ -162,7 +162,6 @@ class Parser:
             token_buffer: list[Token] = []
 
             while not self.is_at_end() and not self.peek().token_type == TokenType.NEWLINE:
-                print(self.peek())
                 token_buffer.append(self.advance())
                 if token_buffer[-1].token_type == TokenType.COMMENT:
                     token_buffer.pop()
@@ -249,7 +248,6 @@ class Parser:
         token_buffer: list[Token] = []
         result = []
         for token in values:
-            print(token_buffer)
             if token.token_type.is_opening_bracket:
                 open_brackets += token.value
                 token_buffer.append(token)

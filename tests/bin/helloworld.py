@@ -1,2 +1,2 @@
-meno = input("Ako sa volas?")
-print(f"{x} je pekne meno")
+meno = input('"Ako sa volas?"')
+print(f'"{meno} je pekne meno"')
