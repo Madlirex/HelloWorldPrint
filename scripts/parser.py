@@ -225,6 +225,16 @@ class Parser:
 
         return Call(name, [args])
 
+    def parse_attribute(self, tokens: list[Token]) -> Attribute:
+        obj = self.parse_tokens(tokens[:-2])
+        name = tokens[-1].value
+        return Attribute(obj, name)
+
+    def parse_operator(self, tokens: list[Token]) -> Operation:
+        left = self.parse_single_token(tokens[0])
+        right = self.parse_single_token(tokens[2])
+        return Operation(left, right, tokens[1].value)
+
     #endregion
 
     #region Simple Keywords
@@ -355,12 +365,6 @@ class Parser:
     #endregion
 
     #region Miscellaneous
-
-    def parse_params(self) -> list[Node]:
-        pass
-
-    def parse_parents(self) -> list[Node]:
-        pass
 
     #endregion
 
