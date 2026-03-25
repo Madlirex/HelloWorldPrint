@@ -133,7 +133,7 @@ class Parser:
     def peek_curr_line(self) -> list[Token]:
         token_buffer: list[Token] = []
         i = 0
-        while not self.is_at_end() and not self.peek().token_type == TokenType.NEWLINE:
+        while not self.is_at_end() and not self.peek(i).token_type == TokenType.NEWLINE:
             token_buffer.append(self.peek(i))
             i += 1
             if token_buffer[-1].token_type == TokenType.COMMENT:
@@ -206,6 +206,8 @@ class Parser:
     def parse_block(self) -> Block:
         self.skip_redundant_newlines()
 
+        past_statement: IfStatement | ForLoop | MatchNode | TryExcept | None = None
+
         nodes = []
         indent = self.peek().value if self.peek().token_type == TokenType.INDENT else self.peek(1).value
         while not self.is_at_end() and self.peek(1).value == indent:
@@ -213,9 +215,21 @@ class Parser:
             self.advance()
 
             token_buffer = self.consume_curr_line()
-
             if token_buffer:
-                nodes.append(self.parse_line(token_buffer))
+                kw = self.peek_keyword(token_buffer)
+                if kw == "elif":
+                    past_statement.elifs.append(self.parse_elif(token_buffer))
+                elif kw == "else":
+                    past_statement.else_body = self.parse_else(token_buffer)
+                elif kw == "case":
+                    past_statement.values.append(self.parse_case(token_buffer))
+                elif kw == "except":
+                    past_statement.excepts.append(self.parse_except(token_buffer))
+                else:
+                    nodes.append(self.parse_line(token_buffer))
+
+                if type(nodes[-1]) in (IfStatement, ForLoop, MatchNode, TryExcept):
+                    past_statement = nodes[-1]
 
             self.skip_redundant_newlines()
 
@@ -394,7 +408,6 @@ class Parser:
             if len(open_brackets) == 0:
                 if token.value == sep:
                     token_buffer.pop()
-                    print(token_buffer)
                     result.append(self.parse_tokens(token_buffer))
                     token_buffer = []
 
@@ -414,17 +427,21 @@ class Parser:
             raise SyntaxError("Invalid syntax you illiterate swine")
 
         body = self.parse_block()
-        elifs = []
-        while self.peek_keyword(self.get_curr_line()):
-
 
         return IfStatement(self.parse_tokens(tokens[len(SWAPPED_KEYWORDS['if']):-1:]), body)
 
     def parse_elif(self, tokens: list[Token]) -> tuple[Node, Block]:
-        pass
+        start = self.consume_words(tokens, *SWAPPED_KEYWORDS['elif'])
 
-    def parse_else(self) -> Block:
-        print(self.pos)
+        if tokens[-1].token_type != TokenType.QUESTION:
+            raise SyntaxError("Invalid syntax you illiterate swine")
+
+        return self.parse_tokens(tokens[start:-1]), self.parse_block()
+
+    def parse_else(self, tokens: list[Token]) -> Block:
+        if tokens[-1].token_type != TokenType.EXCLAMAITON:
+            raise SyntaxError("Invalid syntax you illiterate swine")
+
         return self.parse_block()
 
     def parse_while(self, tokens: list[Token]) -> While:

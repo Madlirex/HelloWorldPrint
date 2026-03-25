@@ -2,4 +2,7 @@ ja alebo ty(input);"Ako sa volas?"('input') = meno; vek
 "{meno} je pekne meno"(f'print')
 čo ak meno sa rovná "simon" alebo meno sa rovná "Matej"?
     5 + 5 = x
-inak
+ibaže x alebo y?
+    7 = x
+inak!
+   5 = x
