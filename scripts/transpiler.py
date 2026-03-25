@@ -1,5 +1,4 @@
 from contextlib import contextmanager
-
 from tokenizer import Tokenizer
 from parser import Parser
 from node import *
@@ -13,13 +12,14 @@ class Transpiler:
         self.pos: int = 0
         self.indent: int = 0
         self.indent_size: int = 4
+        self.files: list[str] = []
 
-    def transpile_program(self) -> str:
+    def transpile_program(self) -> tuple[str, list[str]]:
         result = ""
         for line in self.ast.block.nodes:
             result += f"{self.transpile(line)}\n"
 
-        return result
+        return result, self.files
 
     def transpile_nodes(self, nodes: list[Node] | tuple[Node, ...]) -> str:
         return ", ".join(self.transpile(node) for node in nodes)
@@ -248,11 +248,18 @@ class Transpiler:
     def visit_import(self, node: Import) -> str:
 
         aliases = f" as {self.transpile_nodes(node.aliases)}" if node.aliases else ""
+        modules = self.transpile_nodes(node.modules)
+        for module in modules.split(", "):
+            self.files.append(module)
         return f"import {self.transpile_nodes(node.modules)}{aliases}"
 
     def visit_from_import(self, node: FromImport) -> str:
 
         aliases = f" as {self.transpile_nodes(node.aliases)}" if node.aliases else ""
+        path = self.transpile(node.path)
+        modules = self.transpile_nodes(node.modules)
+        for module in modules.split(", "):
+            self.files.append(f"{path}.{module}")
         return f"from {self.transpile(node.path)} import {self.transpile_nodes(node.modules)}{aliases}"
 
     # noinspection PyArgumentList
@@ -277,6 +284,7 @@ if __name__ == "__main__":
     pr.block = Block([IfStatement(Variable("Hi"), Block([Assignment([Variable("Hi")], [String("Hello")])])), Assignment([Variable("Hi")], [String("Hello")])])
     pr.block = Block([FunctionDef("SampleFunction", pr.block, [Variable("Fucker"), Variable("sucker")])])
     pr.block = Block([ClassDef("SampleClass", pr.block)])
+    pr.block = Block([Import([Variable("Hlloe.world")])])
 
     with open("../tests/helloworld.print", 'r', encoding='utf8') as f:
         code = f.read()

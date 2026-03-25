@@ -28,11 +28,11 @@ class Compiler:
             parser = Parser(tokens)
             ast = parser.parse_program()
             trans = Transpiler(ast)
-            compiled_code = trans.transpile_program()
+            compiled_code, modules = trans.transpile_program()
 
         name = Compiler.get_basename(path) + ".py"
         root = Compiler.get_directory(path) if not root else root
-        files = []
+        files = Compiler.convert_modules_to_paths(modules)
         for f in files:
             Compiler.compile_code(f, root)
 
@@ -41,6 +41,14 @@ class Compiler:
         Compiler.create_file(folder + name)
         with open(folder + name, 'w', encoding=Compiler.ENCODING) as f:
             f.write(compiled_code)
+
+    @staticmethod
+    def convert_modules_to_paths(modules: list[str]) -> list[str]:
+        return [Compiler.convert_module_to_path(module) for module in modules]
+
+    @staticmethod
+    def convert_module_to_path(module: str) -> str:
+        return module.replace(".", "/")
 
     @staticmethod
     def create_file(path: str) -> None:
