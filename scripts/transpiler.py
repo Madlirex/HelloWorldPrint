@@ -101,6 +101,9 @@ class Transpiler:
     def visit_raise(self, node: Raise) -> str:
         return f"raise {self.transpile(node.value)}"
 
+    def visit_del(self, node: DelNode) -> str:
+        return f"del {self.transpile(node.value)}"
+
     #endregion
 
     #region Logical Expressions

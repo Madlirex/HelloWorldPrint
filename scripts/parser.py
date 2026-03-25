@@ -213,6 +213,18 @@ class Parser:
             return self.parse_import(line)
         if kw == "from":
             return self.parse_from(line)
+        if kw == "break":
+            return self.parse_break()
+        if kw == "pass":
+            return self.parse_pass()
+        if kw == "continue":
+            return self.parse_continue()
+        if kw == "del":
+            return self.parse_del(line)
+        if kw == "return":
+            return self.parse_return(line)
+        if kw == "yield":
+            return self.parse_yield(line)
 
         for tok in line[::-1]:
             if tok.token_type == TokenType.EQUAL or tok.token_type == TokenType.EQUAL_OPERATOR:
@@ -297,6 +309,39 @@ class Parser:
     #endregion
 
     #region Simple Keywords
+
+    def parse_pass(self) -> Pass:
+        return Pass()
+
+    def parse_continue(self) -> Continue:
+        return Continue()
+
+    def parse_break(self) -> Break:
+        return Break()
+
+    def parse_return(self, tokens: list[Token]) -> Return:
+        start = self.match_words(tokens, *SWAPPED_KEYWORDS['return'])
+
+        if tokens[-1].token_type != TokenType.EXCLAMAITON:
+            raise SyntaxError("Invalid syntax you illiterate swine")
+
+        return Return(self.parse_tokens(tokens[start:-1]))
+
+    def parse_yield(self, tokens: list[Token]) -> Yield:
+        start = self.match_words(tokens, *SWAPPED_KEYWORDS['yield'])
+
+        if tokens[-1].token_type != TokenType.EXCLAMAITON:
+            raise SyntaxError("Invalid syntax you illiterate swine")
+
+        return Yield(self.parse_tokens(tokens[start:-1]))
+
+    def parse_del(self, tokens: list[Token]) -> DelNode:
+        start = self.match_words(tokens, *SWAPPED_KEYWORDS['del'])
+
+        if tokens[-1].token_type != TokenType.EXCLAMAITON:
+            raise SyntaxError("Invalid syntax you illiterate swine")
+
+        return DelNode(self.parse_tokens(tokens[start:-1]))
 
     #endregion
 

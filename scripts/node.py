@@ -352,3 +352,12 @@ class Program(Node):
 
     def __init__(self, block: Block = None) -> None:
         self.block: Block = Block([Pass()]) if not block or len(block.nodes) == 0 else block
+
+
+class DelNode(Node):
+
+    def __init__(self, value: Node) -> None:
+        self.value: Node = value
+
+    def accept(self, visitor):
+        return visitor.visit_del(self)
