@@ -1,4 +1,4 @@
 ja alebo ty(input);"Ako sa volas?"('input') = meno; vek
 "{meno} je pekne meno"(f'print')
-#čo ak meno sa rovná "simon"?
-5 + 5 = x
+čo ak meno sa rovná "simon"?
+    5 + 5 = x

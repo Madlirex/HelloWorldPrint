@@ -256,10 +256,17 @@ class Parser:
             return self.parse_not(tokens)
 
         kw = self.peek_keyword(tokens[1:])
+
         if kw == "or":
             return self.parse_or(tokens)
         if kw == "and":
             return self.parse_and(tokens)
+        if kw in ("<", ">", "<=", ">=", "!=", "=="):
+            return self.parse_equality(tokens, kw)
+        if kw == "in":
+            return self.parse_in(tokens)
+        if kw == "is":
+            return self.parse_is(tokens)
 
         raise NotImplementedError(f"Not implemented for tokens {tokens}")
 
@@ -286,6 +293,32 @@ class Parser:
 
         raise SyntaxError(f"Expected {SWAPPED_KEYWORDS} to be in {tokens}")
 
+    def parse_equality(self, tokens: list[Token], operator: str) -> Operation:
+        start = self.find_words(tokens, *SWAPPED_KEYWORDS[operator])
+        end = start + len(SWAPPED_KEYWORDS[operator])
+
+        if start != -1:
+            return Operation(self.parse_tokens(tokens[:start]), self.parse_tokens(tokens[end::]), operator)
+
+        raise SyntaxError(f"Expected {SWAPPED_KEYWORDS} to be in {tokens}")
+
+    def parse_in(self, tokens: list[Token]) -> InNode:
+        start = self.find_words(tokens, *SWAPPED_KEYWORDS['in'])
+        end = start + len(SWAPPED_KEYWORDS['in'])
+
+        if start != -1:
+            return InNode(self.parse_tokens(tokens[:start]), self.parse_tokens(tokens[end::]))
+
+        raise SyntaxError(f"Expected {SWAPPED_KEYWORDS} to be in {tokens}")
+
+    def parse_is(self, tokens: list[Token]) -> IsNode:
+        start = self.find_words(tokens, *SWAPPED_KEYWORDS['is'])
+        end = start + len(SWAPPED_KEYWORDS['is'])
+
+        if start != -1:
+            return IsNode(self.parse_tokens(tokens[:start]), self.parse_tokens(tokens[end::]))
+
+        raise SyntaxError(f"Expected {SWAPPED_KEYWORDS} to be in {tokens}")
     #endregion
 
     #region Data Types
