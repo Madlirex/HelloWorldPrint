@@ -202,6 +202,8 @@ class Parser:
             return self.parse_while(line)
         if kw == "def":
             return self.parse_def(line)
+        if kw == "class":
+            return self.parse_class(line)
 
         for tok in line[::-1]:
             if tok.token_type == TokenType.EQUAL or tok.token_type == TokenType.EQUAL_OPERATOR:
@@ -470,6 +472,16 @@ class Parser:
         name = tokens[start].value
         params = self.parse_token_list(tokens[start+2:-2])
         return FunctionDef(name, self.parse_block(), params)
+
+    def parse_class(self, tokens: list[Token]) -> ClassDef:
+        start = self.consume_words(tokens, *SWAPPED_KEYWORDS['class'])
+
+        if tokens[-1].token_type != TokenType.DOT:
+            raise SyntaxError("Invalid syntax you illiterate swine")
+
+        name = tokens[start].value
+        parents = self.parse_token_list(tokens[start+2:-2])
+        return ClassDef(name, self.parse_block(), parents)
 
     #endregion
 
