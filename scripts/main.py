@@ -20,6 +20,11 @@ class Compiler:
 
     @staticmethod
     def compile_code(path: str, root: str = None) -> None:
+        if not path:
+            return
+
+        if not os.path.exists(path):
+            return
 
         with open(path, encoding=Compiler.ENCODING) as f:
             code = f.read()
@@ -34,7 +39,7 @@ class Compiler:
         root = Compiler.get_directory(path) if not root else root
         files = Compiler.convert_modules_to_paths(modules)
         for f in files:
-            Compiler.compile_code(f, root)
+            Compiler.compile_code(root + f + ".print", root)
 
         folder = Compiler.get_bin_directory(path, root)
         Compiler.create_dir(folder)
