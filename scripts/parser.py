@@ -181,17 +181,24 @@ class Parser:
         for i in reversed(range(len(tokens))):
             if tokens[i].token_type == TokenType.EQUAL_OPERATOR or tokens[i].token_type == TokenType.EQUAL:
                 op = tokens[i].value
-                left = [self.parse_token(tokens[0:i])]
-                right = [self.parse_token(tokens[i+1:])]
+                left = self.parse_tokens(tokens[0:i], ";")
+                right = self.parse_tokens(tokens[i+1:], ";")
 
         return Assignment(right, left, op)
 
     def parse_function(self, tokens: list[Token]) -> Call:
 
-        name = self.parse_token([tokens[-2]])
-        args = Variable(" ".join(i.value for i in tokens[:-3:]))
+        start = 0
+        for i, token in enumerate(reversed(tokens)):
+            if token.token_type == TokenType.LPAREN:
+                start = len(tokens) - i
 
-        return Call(name, [args])
+        end = -2
+
+        name = self.parse_tokens(tokens[start:end])
+        args = Variable(" ".join(i.value for i in tokens[:start-1:]))
+
+        return Call(name[0], [args])
 
     #endregion
 
@@ -237,7 +244,7 @@ class Parser:
     def parse_braces(self, tokens: list[Token]) -> Node:
         pass
 
-    def parse_tokens(self, values: list[Token]) -> list[Node]:
+    def parse_tokens(self, values: list[Token], sep: str = ",") -> list[Node]:
 
         result = []
 
