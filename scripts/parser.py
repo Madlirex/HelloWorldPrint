@@ -141,7 +141,6 @@ class Parser:
         if kw == "while":
             return self.parse_while()
 
-        is_function = False
         for tok in line[::-1]:
             if tok.token_type == TokenType.EQUAL or tok.token_type == TokenType.EQUAL_OPERATOR:
                 return self.parse_assignment(line)
@@ -206,68 +205,42 @@ class Parser:
 
     #region Data Types
 
-    def parse_token(self, tokens: list[Token]) -> Node:
+    def parse_single_token(self, token: Token) -> Node:
 
-        if len(tokens) == 1:
-            if self.check_words(tokens, *SWAPPED_KEYWORDS['None']):
-                return NoneNode()
-            if self.check_words(tokens, *SWAPPED_KEYWORDS['True']):
-                return Boolean(True)
-            if self.check_words(tokens, *SWAPPED_KEYWORDS['False']):
-                return Boolean(False)
+        if self.check_words([token], *SWAPPED_KEYWORDS['None']):
+            return NoneNode()
+        if self.check_words([token], *SWAPPED_KEYWORDS['True']):
+            return Boolean(True)
+        if self.check_words([token], *SWAPPED_KEYWORDS['False']):
+            return Boolean(False)
 
-            if tokens[0].token_type == TokenType.STRING:
-                return String(tokens[0].value)
-            if tokens[0].token_type == TokenType.NUMBER:
-                return Number(tokens[0].value)
-            if tokens[0].token_type == TokenType.VALUE:
-                return Variable(tokens[0].value)
+        if token.token_type == TokenType.STRING:
+            return String(token.value)
+        if token.token_type == TokenType.NUMBER:
+            return Number(token.value)
+        if token.token_type == TokenType.VALUE:
+            return Variable(token.value)
 
-        if tokens[-1].token_type == TokenType.RPAREN:
-            return self.parse_function(tokens)
+        raise Exception(f"Unexpected tokens: {token}")
 
-        raise Exception(f"Unexpected tokens: {tokens}")
+    def parse_list_type(self, values: list[Token], bracket: str = "[") -> Node:
 
-    def parse_list_type(self, values: list[Token], sep: str = ",", bracket: str = "[") -> Node:
-        sep = self.reverse_sep(sep)
         if bracket in "{}":
-            return self.parse_braces(values, sep)
+            return self.parse_braces(values)
         if bracket in "[]":
-            return ListNode(self.parse_list(values, sep))
+            return ListNode(self.parse_tokens(values))
         if bracket in "()":
-            return TupleNode(self.parse_list(values, sep))
+            return TupleNode(self.parse_tokens(values))
 
         raise NotImplementedError("Not implemented list type")
 
-    def parse_braces(self, tokens: list[Token], sep: str = ",") -> Node:
+    def parse_braces(self, tokens: list[Token]) -> Node:
         pass
 
-    def parse_list(self, values: list[Token], sep: str = ",") -> list[Node]:
+    def parse_tokens(self, values: list[Token]) -> list[Node]:
 
-        open_brackets = []
-        token_buffer: list[Token] = []
         result = []
-        for token in values:
-            if token.token_type.is_opening_bracket:
-                open_brackets += token.value
-                token_buffer.append(token)
 
-            if not open_brackets:
-                if token.value == sep:
-                    result.append(self.parse_token(token_buffer))
-                else:
-                    token_buffer.append(token)
-            else:
-                if token.value in BRACKET_PAIRS:
-                    if BRACKET_PAIRS[token.value] == open_brackets[-1]:
-                        open_brackets.pop()
-                        if not open_brackets:
-                            result.append(self.parse_list_type(token_buffer, sep, token.value))
-                    else:
-                        raise Exception("Unclosed bracket.")
-                else:
-                    token_buffer.append(token)
-        result.append(self.parse_token(token_buffer))
         return result
 
 
