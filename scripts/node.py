@@ -120,8 +120,8 @@ class Lambda(Node):
 
 class ForLoop(Node):
 
-    def __init__(self, variable: list[Variable], expression: Node, body: Block, else_body: Block = None) -> None:
-        self.variable: list[Variable] = variable
+    def __init__(self, variable: list[Node], expression: Node, body: Block, else_body: Block = None) -> None:
+        self.variable: list[Node] = variable
         self.expression: Node = expression
         self.body: Block = body
         self.else_body: Block = else_body or Block([Pass()])
