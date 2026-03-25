@@ -92,10 +92,17 @@ class Parser:
 
         return True
 
-    def consume_words(self, tokens: list[Token], *words: str) -> None:
+    def consume_words(self, tokens: list[Token], *words: str) -> int:
 
         if not self.match_words(tokens, *words):
             raise SyntaxError(f"Expected {' '.join(words)}, got {tokens}")
+        return len(words)
+
+    def find_words(self, tokens: list[Token], *words: str) -> int:
+        for i in range(len(tokens)):
+            if self.match_words(tokens[i:], *words):
+                return i
+        return -1
 
     #endregion
 
@@ -225,6 +232,43 @@ class Parser:
     #endregion
 
     #region Logical Operators
+
+    def parse_logical_operator(self, tokens: list[Token]) -> Node:
+        kw = self.peek_keyword(tokens)
+
+        if kw == "not":
+            return self.parse_not(tokens)
+
+        kw = self.peek_keyword(tokens[1:])
+        if kw == "or":
+            return self.parse_or(tokens)
+        if kw == "and":
+            return self.parse_and(tokens)
+
+        raise NotImplementedError(f"Not implemented for tokens {tokens}")
+
+    def parse_not(self, tokens: list[Token]) -> NotNode:
+        start = self.consume_words(tokens, *SWAPPED_KEYWORDS['not'])
+
+        return NotNode(self.parse_tokens(tokens[start:]))
+
+    def parse_or(self, tokens: list[Token]) -> OrNode:
+        start = self.find_words(tokens, *SWAPPED_KEYWORDS['or'])
+        end = start + len(SWAPPED_KEYWORDS['or'])
+
+        if start != -1:
+            return OrNode(self.parse_tokens(tokens[:start]), self.parse_tokens(tokens[end::]))
+
+        raise SyntaxError(f"Expected {SWAPPED_KEYWORDS} to be in {tokens}")
+
+    def parse_and(self, tokens: list[Token]) -> OrNode:
+        start = self.find_words(tokens, *SWAPPED_KEYWORDS['and'])
+        end = start + len(SWAPPED_KEYWORDS['and'])
+
+        if start != -1:
+            return OrNode(self.parse_tokens(tokens[:start]), self.parse_tokens(tokens[end::]))
+
+        raise SyntaxError(f"Expected {SWAPPED_KEYWORDS} to be in {tokens}")
 
     #endregion
 
