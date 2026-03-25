@@ -133,6 +133,9 @@ class Parser:
 
         return program
 
+    def parse_tokens(self, tokens: list[Token]) -> Node:
+        pass
+
     def parse_line(self, line: list[Token]) -> Node:
         kw = self.peek_keyword(line)
 
@@ -230,23 +233,42 @@ class Parser:
 
         raise Exception(f"Unexpected tokens: {token}")
 
-    def parse_list_type(self, values: list[Token], bracket: str = "[") -> Node:
-
+    def parse_list_type(self, values: list[Token]) -> Node:
+        bracket = values[0].value
         if bracket in "{}":
             return self.parse_braces(values)
         if bracket in "[]":
-            return ListNode(self.parse_tokens(values))
+            return ListNode(self.parse_token_list(values))
         if bracket in "()":
-            return TupleNode(self.parse_tokens(values))
+            return TupleNode(self.parse_token_list(values))
 
         raise NotImplementedError("Not implemented list type")
 
     def parse_braces(self, tokens: list[Token]) -> Node:
         pass
 
-    def parse_tokens(self, values: list[Token], sep: str = ",") -> list[Node]:
+    def parse_token_list(self, values: list[Token], sep: str = ",") -> list[Node]:
 
         result = []
+        open_brackets = []
+        token_buffer = []
+
+        for token in values:
+            token_buffer.append(token)
+
+            if token.token_type.is_opening_bracket:
+                open_brackets.append(token.value)
+            elif token.token_type.is_bracket:
+                if len(open_brackets) > 0 and BRACKET_PAIRS[token.value] == open_brackets[-1]:
+                    open_brackets.pop()
+                else:
+                    raise Exception("Not enough brackets to close")
+
+            if len(open_brackets) == 0:
+                if token.value == sep:
+                    token_buffer.pop()
+                    result.append(self.parse_tokens(token_buffer))
+                    token_buffer.clear()
 
         return result
 
