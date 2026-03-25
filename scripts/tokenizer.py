@@ -28,6 +28,16 @@ class Tokenizer:
 
     #endregion
 
+    def swap_indent(self) -> None:
+        max_indent = 0
+        for token in self.tokens:
+            if token.token_type == TokenType.INDENT:
+                max_indent = token.value if token.value > max_indent else max_indent
+
+        for token in self.tokens:
+            if token.token_type == TokenType.INDENT:
+                token.value = max_indent - token.value
+
     def tokenize(self) -> list[Token]:
 
         self.tokens.append(Token(TokenType.NEWLINE, '\n'))
@@ -116,6 +126,7 @@ class Tokenizer:
             raise Exception(f"Unclosed brackets: {", ".join(self.open_brackets)}")
 
         self.tokens.append(Token(TokenType.EOF))
+        self.swap_indent()
         return self.tokens.copy()
 
     def read_operator(self) -> Token:

@@ -10,6 +10,7 @@ class Parser:
     def __init__(self, tokenized_code: list[Token]) -> None:
         self.tokens: list[Token] = tokenized_code
         self.pos: int = 0
+        self.expected_indent: int = -4
 
     #region Helpers
     #region Basic Helpers
@@ -130,6 +131,11 @@ class Parser:
 
     #region Line Helpers
 
+    def check_indent(self, token: Token) -> None:
+        if token.token_type == TokenType.INDENT:
+            if not token.value == self.expected_indent:
+                raise IndentationError(f"Wrong indent {token.value}, expected {self.expected_indent}")
+
     def peek_curr_line(self) -> list[Token]:
         token_buffer: list[Token] = []
         i = 0
@@ -205,6 +211,7 @@ class Parser:
 
     def parse_block(self) -> Block:
         self.skip_redundant_newlines()
+        self.expected_indent += 4
 
         past_statement: IfStatement | ForLoop | MatchNode | TryExcept | None = None
 
@@ -212,7 +219,7 @@ class Parser:
         indent = self.peek().value if self.peek().token_type == TokenType.INDENT else self.peek(1).value
         while not self.is_at_end() and self.peek(1).value == indent:
             self.advance()
-            self.advance()
+            self.check_indent(self.advance())
 
             token_buffer = self.consume_curr_line()
             if token_buffer:
@@ -232,7 +239,7 @@ class Parser:
                     past_statement = nodes[-1]
 
             self.skip_redundant_newlines()
-
+        self.expected_indent -= 4
         return Block(nodes)
 
     def parse_assignment(self, tokens: list[Token]) -> Assignment:
@@ -445,12 +452,12 @@ class Parser:
         return self.parse_block()
 
     def parse_while(self, tokens: list[Token]) -> While:
-        self.consume_words(tokens, *SWAPPED_KEYWORDS['if'])
+        self.consume_words(tokens, *SWAPPED_KEYWORDS['while'])
 
         if tokens[-1].token_type != TokenType.EXCLAMAITON:
             raise SyntaxError("Invalid syntax you illiterate swine")
 
-        return While(self.parse_tokens(tokens[len(SWAPPED_KEYWORDS['if']):-1:]), self.parse_block())
+        return While(self.parse_tokens(tokens[len(SWAPPED_KEYWORDS['while']):-1:]), self.parse_block())
 
     #endregion
 

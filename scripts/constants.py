@@ -6,7 +6,7 @@ KEYWORDS: dict[tuple[str, ...], str] = {
         ("čo", "ak"): "if",
         ("ibaže",): "elif",
         ("inak",): "else",
-        ("kým", "platí,", "že"): "while",
+        ("kým", "platí", "že"): "while",
         ("pre", "každé"): "for",
         ("trieda",): "class",
         ("definuje",): "def",
@@ -41,7 +41,7 @@ KEYWORDS: dict[tuple[str, ...], str] = {
         ("nelokálna",): "nonlocal",
         ("využi",): "with",
         ("porovnaj",): "match",
-        ("v", "prípade,", "že"): "case",
+        ("v", "prípade", "že"): "case",
         ("vyvráť",): "raise",
         ("skrátená", "funkcia,", "väčšinou", "anonymná", "a", "bez", "mena,", "používa", "sa", "pri", "krátkych", "operáciach", "alebo", "vo", "vnútri", "funkcií", "ako", "argument"): "lambda"
 }
