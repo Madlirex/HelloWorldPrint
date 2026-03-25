@@ -227,9 +227,9 @@ class Parser:
         end = -1
 
         name = self.parse_tokens(tokens[start:end])
-        args = Variable(" ".join(i.value for i in tokens[:start-1:]))
+        args = self.parse_token_list(tokens[:start-1:], ",")
 
-        return Call(name, [args])
+        return Call(name, args)
 
     def parse_attribute(self, tokens: list[Token]) -> Attribute:
         obj = self.parse_tokens(tokens[:-2])
