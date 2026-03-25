@@ -1,8 +1,5 @@
-from setuptools.command.alias import alias
-
-from scripts.constants import KEYWORDS_LIST, FLAT_KEYWORD_FUNCTIONS, KEYWORDS, SWAPPED_KEYWORDS, BRACKETS, BRACKET_PAIRS
+from scripts.constants import KEYWORDS_LIST, SWAPPED_KEYWORDS, BRACKET_PAIRS
 from token import TokenType, Token
-from tokenizer import Tokenizer
 from node import *
 
 
@@ -550,9 +547,10 @@ class Parser:
     def parse_import(self, tokens: list[Token]) -> Import:
         start = self.consume_words(tokens, *SWAPPED_KEYWORDS['import'])
         end = self.find_words(tokens, *SWAPPED_KEYWORDS['as'])
+        end = len(tokens) if end == -1 else end + len(SWAPPED_KEYWORDS['as'])
 
         modules = self.parse_token_list(tokens[start:end])
-        aliases = self.parse_token_list(tokens[end+len(SWAPPED_KEYWORDS['as']):])
+        aliases = self.parse_token_list(tokens[end:])
         return Import(modules, aliases)
 
     def parse_from(self, tokens: list[Token]) -> FromImport:
@@ -561,10 +559,10 @@ class Parser:
 
         path = self.parse_tokens(tokens[start:end])
         start = self.find_words(tokens[end:], *SWAPPED_KEYWORDS['as'])
-        start = len(tokens) if start == -1 else start
+        start = len(tokens) if start == -1 else start+len(SWAPPED_KEYWORDS['as'])
 
         modules = self.parse_token_list(tokens[end+len(SWAPPED_KEYWORDS['import']):start])
-        aliases = self.parse_token_list(tokens[start+len(SWAPPED_KEYWORDS['as']):])
+        aliases = self.parse_token_list(tokens[start:])
 
         return FromImport(path, modules, aliases)
 

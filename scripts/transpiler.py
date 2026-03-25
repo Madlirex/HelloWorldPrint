@@ -246,8 +246,7 @@ class Transpiler:
         return result
 
     def visit_import(self, node: Import) -> str:
-
-        aliases = f" as {self.transpile_nodes(node.aliases)}" if node.aliases else ""
+        aliases = f" as {self.transpile_nodes(node.aliases)}" if len(node.aliases) > 0 and not node.aliases[0] is None else ""
         modules = self.transpile_nodes(node.modules)
         for module in modules.split(", "):
             self.files.append(module)
@@ -255,7 +254,7 @@ class Transpiler:
 
     def visit_from_import(self, node: FromImport) -> str:
 
-        aliases = f" as {self.transpile_nodes(node.aliases)}" if node.aliases else ""
+        aliases = f" as {self.transpile_nodes(node.aliases)}" if len(node.aliases) > 0 and not node.aliases[0] is None else ""
         path = self.transpile(node.path)
         modules = self.transpile_nodes(node.modules)
         for module in modules.split(", "):

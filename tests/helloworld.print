@@ -1,3 +1,4 @@
+    importuj more.test
     ja alebo ty(input);"Ako sa volas?"('input') = meno; vek
     "{meno} je pekne meno"(f'print')
     čo ak meno sa rovná "simon" alebo meno sa rovná "Matej"?
