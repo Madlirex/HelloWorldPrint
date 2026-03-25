@@ -1,3 +1,5 @@
+from setuptools.command.alias import alias
+
 from scripts.constants import KEYWORDS_LIST, FLAT_KEYWORD_FUNCTIONS, KEYWORDS, SWAPPED_KEYWORDS, BRACKETS, BRACKET_PAIRS
 from token import TokenType, Token
 from tokenizer import Tokenizer
@@ -210,6 +212,10 @@ class Parser:
             return self.parse_match(line)
         if kw == "try":
             return self.parse_try(line)
+        if kw == "import":
+            return self.parse_import(line)
+        if kw == "from":
+            return self.parse_from(line)
 
         for tok in line[::-1]:
             if tok.token_type == TokenType.EQUAL or tok.token_type == TokenType.EQUAL_OPERATOR:
@@ -541,6 +547,26 @@ class Parser:
         variable = self.parse_tokens(tokens[start:-1])
         return variable, self.parse_block()
 
+    def parse_import(self, tokens: list[Token]) -> Import:
+        start = self.consume_words(tokens, *SWAPPED_KEYWORDS['import'])
+        end = self.find_words(tokens, *SWAPPED_KEYWORDS['as'])
+
+        modules = self.parse_token_list(tokens[start:end])
+        aliases = self.parse_token_list(tokens[end+len(SWAPPED_KEYWORDS['as']):])
+        return Import(modules, aliases)
+
+    def parse_from(self, tokens: list[Token]) -> FromImport:
+        start = self.consume_words(tokens, *SWAPPED_KEYWORDS['from'])
+        end = self.find_words(tokens, *SWAPPED_KEYWORDS['import'])
+
+        path = self.parse_tokens(tokens[start:end])
+        start = self.find_words(tokens[end:], *SWAPPED_KEYWORDS['as'])
+        start = len(tokens) if start == -1 else start
+
+        modules = self.parse_token_list(tokens[end+len(SWAPPED_KEYWORDS['import']):start])
+        aliases = self.parse_token_list(tokens[start+len(SWAPPED_KEYWORDS['as']):])
+
+        return FromImport(path, modules, aliases)
 
     #endregion
 
