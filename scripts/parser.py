@@ -134,7 +134,22 @@ class Parser:
         return program
 
     def parse_tokens(self, tokens: list[Token]) -> Node:
-        pass
+        if len(tokens) == 1:
+            return self.parse_single_token(tokens[0])
+
+        if tokens[0].token_type.is_opening_bracket:
+            return self.parse_list_type(tokens)
+
+        if tokens[1].token_type == TokenType.DOT:
+            return self.parse_attribute(tokens)
+
+        if tokens[1].token_type == TokenType.COMMA:
+            return TupleNode(self.parse_token_list(tokens))
+
+        if tokens[1].token_type == TokenType.OPERATOR:
+            return self.parse_operator(tokens)
+
+        return self.parse_logical_operator(tokens)
 
     def parse_line(self, line: list[Token]) -> Node:
         kw = self.peek_keyword(line)
@@ -142,7 +157,7 @@ class Parser:
         if kw == "if":
             return self.parse_if(line)
         if kw == "while":
-            return self.parse_while()
+            return self.parse_while(line)
 
         for tok in line[::-1]:
             if tok.token_type == TokenType.EQUAL or tok.token_type == TokenType.EQUAL_OPERATOR:
@@ -184,8 +199,8 @@ class Parser:
         for i in reversed(range(len(tokens))):
             if tokens[i].token_type == TokenType.EQUAL_OPERATOR or tokens[i].token_type == TokenType.EQUAL:
                 op = tokens[i].value
-                left = self.parse_tokens(tokens[0:i], ";")
-                right = self.parse_tokens(tokens[i+1:], ";")
+                left = self.parse_token_list(tokens[0:i], ";")
+                right = self.parse_token_list(tokens[i+1:], ";")
 
         return Assignment(right, left, op)
 
@@ -201,7 +216,7 @@ class Parser:
         name = self.parse_tokens(tokens[start:end])
         args = Variable(" ".join(i.value for i in tokens[:start-1:]))
 
-        return Call(name[0], [args])
+        return Call(name, [args])
 
     #endregion
 

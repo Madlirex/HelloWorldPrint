@@ -1,3 +1,4 @@
 "Ako sa volas?"('input') = meno
 "{meno} je pekne meno"(f'print')
 #čo ak meno sa rovná "simon"?
+5 + 5
