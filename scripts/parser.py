@@ -140,12 +140,17 @@ class Parser:
 
         return program
 
-    def parse_tokens(self, tokens: list[Token]) -> Node:
+    def parse_tokens(self, tokens: list[Token]) -> Node | None:
         if len(tokens) == 1:
             return self.parse_single_token(tokens[0])
 
-        if tokens[0].token_type.is_opening_bracket:
-            return self.parse_list_type(tokens)
+        if len(tokens) == 0:
+            return None
+
+        if tokens[-1].token_type.is_bracket:
+            if tokens[-2].token_type == TokenType.COMMA or tokens[-2].token_type == TokenType.COLON:
+                return self.parse_list_type(tokens)
+            return self.parse_function(tokens)
 
         if tokens[1].token_type == TokenType.DOT:
             return self.parse_attribute(tokens)
@@ -208,17 +213,18 @@ class Parser:
                 op = tokens[i].value
                 left = self.parse_token_list(tokens[0:i], ";")
                 right = self.parse_token_list(tokens[i+1:], ";")
+                break
 
         return Assignment(right, left, op)
 
     def parse_function(self, tokens: list[Token]) -> Call:
-
         start = 0
         for i, token in enumerate(reversed(tokens)):
             if token.token_type == TokenType.LPAREN:
                 start = len(tokens) - i
+                break
 
-        end = -2
+        end = -1
 
         name = self.parse_tokens(tokens[start:end])
         args = Variable(" ".join(i.value for i in tokens[:start-1:]))
@@ -336,8 +342,11 @@ class Parser:
             if len(open_brackets) == 0:
                 if token.value == sep:
                     token_buffer.pop()
+                    print(token_buffer)
                     result.append(self.parse_tokens(token_buffer))
-                    token_buffer.clear()
+                    token_buffer = []
+
+        result.append(self.parse_tokens(token_buffer))
 
         return result
 

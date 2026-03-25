@@ -25,7 +25,7 @@ class Transpiler:
         return ", ".join(self.transpile(node) for node in nodes)
 
     def transpile(self, node: Node) -> str:
-        return node.accept(self)
+        return node.accept(self) if node else ""
 
     def emit(self, text: str) -> str:
         return (self.indent * self.indent_size) * " " + text
@@ -294,4 +294,4 @@ if __name__ == "__main__":
 
     trans = Transpiler(parser.parse_program())
     print("------------------------------------ RESULT ------------------------------------")
-    print(trans.transpile_program())
+    print(trans.transpile_program()[0])
