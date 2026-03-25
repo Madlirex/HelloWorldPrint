@@ -206,6 +206,10 @@ class Parser:
             return self.parse_class(line)
         if kw == "for":
             return self.parse_for(line)
+        if kw == "match":
+            return self.parse_match(line)
+        if kw == "try":
+            return self.parse_try(line)
 
         for tok in line[::-1]:
             if tok.token_type == TokenType.EQUAL or tok.token_type == TokenType.EQUAL_OPERATOR:
@@ -500,6 +504,43 @@ class Parser:
         expression = self.parse_tokens(tokens[end+len(SWAPPED_KEYWORDS['in']):-1])
 
         return ForLoop(variables, expression, self.parse_block())
+
+    def parse_try(self, tokens: list[Token]) -> TryExcept:
+        self.consume_words(tokens, *SWAPPED_KEYWORDS['try'])
+
+        if tokens[-1].token_type != TokenType.EXCLAMAITON:
+            raise SyntaxError("Invalid syntax you illiterate swine")
+
+        return TryExcept(self.parse_block())
+
+    def parse_except(self, tokens: list[Token]) -> tuple[Node, Block]:
+        start = self.consume_words(tokens, *SWAPPED_KEYWORDS['except'])
+
+        if tokens[-1].token_type != TokenType.QUESTION:
+            raise SyntaxError("Invalid syntax you illiterate swine")
+
+        variable = self.parse_tokens(tokens[start:-1])
+        return variable, self.parse_block()
+
+    def parse_match(self, tokens: list[Token]) -> MatchNode:
+        start = self.consume_words(tokens, *SWAPPED_KEYWORDS['match'])
+
+        if tokens[-1].token_type != TokenType.EXCLAMAITON:
+            raise SyntaxError("Invalid syntax you illiterate swine")
+
+        variable = self.parse_tokens(tokens[start:-1])
+
+        return MatchNode(variable, [])
+
+    def parse_case(self, tokens: list[Token]) -> tuple[Node, Block]:
+        start = self.consume_words(tokens, *SWAPPED_KEYWORDS['case'])
+
+        if tokens[-1].token_type != TokenType.QUESTION:
+            raise SyntaxError("Invalid syntax you illiterate swine")
+
+        variable = self.parse_tokens(tokens[start:-1])
+        return variable, self.parse_block()
+
 
     #endregion
 
