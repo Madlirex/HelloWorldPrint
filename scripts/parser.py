@@ -283,10 +283,15 @@ class Parser:
         if tokens[-1].token_type != TokenType.QUESTION:
             raise SyntaxError("Invalid syntax you illiterate swine")
 
-        return IfStatement(self.parse_token(tokens[len(SWAPPED_KEYWORDS['if']):-1:]), self.parse_block())
+        return IfStatement(self.parse_tokens(tokens[len(SWAPPED_KEYWORDS['if']):-1:]), self.parse_block())
 
-    def parse_while(self) -> While:
-        pass
+    def parse_while(self, tokens: list[Token]) -> While:
+        self.consume_words(tokens, *SWAPPED_KEYWORDS['if'])
+
+        if tokens[-1].token_type != TokenType.EXCLAMAITON:
+            raise SyntaxError("Invalid syntax you illiterate swine")
+
+        return While(self.parse_tokens(tokens[len(SWAPPED_KEYWORDS['if']):-1:]), self.parse_block())
 
     #endregion
 
