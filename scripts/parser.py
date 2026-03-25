@@ -128,6 +128,30 @@ class Parser:
 
     #endregion
 
+    #region Line Helpers
+
+    def peek_curr_line(self) -> list[Token]:
+        token_buffer: list[Token] = []
+        i = 0
+        while not self.is_at_end() and not self.peek().token_type == TokenType.NEWLINE:
+            token_buffer.append(self.peek(i))
+            i += 1
+            if token_buffer[-1].token_type == TokenType.COMMENT:
+                token_buffer.pop()
+
+        return token_buffer
+
+    def consume_curr_line(self) -> list[Token]:
+        token_buffer: list[Token] = []
+        while not self.is_at_end() and not self.peek().token_type == TokenType.NEWLINE:
+            token_buffer.append(self.advance())
+            if token_buffer[-1].token_type == TokenType.COMMENT:
+                token_buffer.pop()
+
+        return token_buffer
+
+    #endregion
+
     #endregion
 
     #region Parsing
@@ -188,12 +212,7 @@ class Parser:
             self.advance()
             self.advance()
 
-            token_buffer: list[Token] = []
-
-            while not self.is_at_end() and not self.peek().token_type == TokenType.NEWLINE:
-                token_buffer.append(self.advance())
-                if token_buffer[-1].token_type == TokenType.COMMENT:
-                    token_buffer.pop()
+            token_buffer = self.consume_curr_line()
 
             if token_buffer:
                 nodes.append(self.parse_line(token_buffer))
@@ -394,7 +413,19 @@ class Parser:
         if tokens[-1].token_type != TokenType.QUESTION:
             raise SyntaxError("Invalid syntax you illiterate swine")
 
-        return IfStatement(self.parse_tokens(tokens[len(SWAPPED_KEYWORDS['if']):-1:]), self.parse_block())
+        body = self.parse_block()
+        elifs = []
+        while self.peek_keyword(self.get_curr_line()):
+
+
+        return IfStatement(self.parse_tokens(tokens[len(SWAPPED_KEYWORDS['if']):-1:]), body)
+
+    def parse_elif(self, tokens: list[Token]) -> tuple[Node, Block]:
+        pass
+
+    def parse_else(self) -> Block:
+        print(self.pos)
+        return self.parse_block()
 
     def parse_while(self, tokens: list[Token]) -> While:
         self.consume_words(tokens, *SWAPPED_KEYWORDS['if'])
