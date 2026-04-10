@@ -1,7 +1,7 @@
 from contextlib import contextmanager
-from tokenizer import Tokenizer
-from parser import Parser
-from node import *
+from scripts.tokenizing.tokenizer import Tokenizer
+from scripts.parsing.parser import Parser
+from scripts.misc.node import *
 
 
 # noinspection PyMethodMayBeStatic
@@ -288,7 +288,7 @@ if __name__ == "__main__":
     pr.block = Block([ClassDef("SampleClass", pr.block)])
     pr.block = Block([Import([Variable("Hlloe.world")])])
 
-    with open("../tests/helloworld.print", 'r', encoding='utf8') as f:
+    with open("../../tests/helloworld.print", 'r', encoding='utf8') as f:
         code = f.read()
 
     tokenizer = Tokenizer(code)

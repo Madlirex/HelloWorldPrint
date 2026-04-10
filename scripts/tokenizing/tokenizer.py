@@ -1,5 +1,5 @@
-from token import Token, TokenType
-from constants import BRACKETS, BRACKET_PAIRS, OPERATORS
+from scripts.tokenizing.token import Token, TokenType
+from scripts.misc.constants import BRACKETS, BRACKET_PAIRS, OPERATORS
 
 
 class Tokenizer:
@@ -233,7 +233,7 @@ class Tokenizer:
 
 print(__name__)
 if __name__ == "__main__":
-    data = open("../tests/helloworld.print", 'r', encoding='utf-8').read()
+    data = open("../../tests/helloworld.print", 'r', encoding='utf-8').read()
     tokenizer = Tokenizer(data)
     for token in tokenizer.tokenize():
         print(token)

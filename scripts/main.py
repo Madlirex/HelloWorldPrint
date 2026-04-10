@@ -1,6 +1,6 @@
-from transpiler import Transpiler
-from parser import Parser
-from tokenizer import Tokenizer
+from scripts.transpiling.transpiler import Transpiler
+from scripts.parsing.parser import Parser
+from scripts.tokenizing.tokenizer import Tokenizer
 import subprocess
 import sys
 import os

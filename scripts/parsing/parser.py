@@ -1,6 +1,6 @@
-from scripts.constants import KEYWORDS_LIST, SWAPPED_KEYWORDS, BRACKET_PAIRS
+from scripts.misc.constants import KEYWORDS_LIST, SWAPPED_KEYWORDS, BRACKET_PAIRS
 from token import TokenType, Token
-from node import *
+from scripts.misc.node import *
 
 
 # noinspection PyShadowingNames
