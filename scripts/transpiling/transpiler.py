@@ -1,11 +1,12 @@
 from contextlib import contextmanager
 from scripts.tokenizing.tokenizer import Tokenizer
+from scripts.transpiling.itranspiler import ITranspiler
 from scripts.parsing.parser import Parser
 from scripts.misc.node import *
 
 
 # noinspection PyMethodMayBeStatic
-class Transpiler:
+class Transpiler(ITranspiler):
 
     def __init__(self, ast: Program) -> None:
         self.ast: Program = ast
@@ -277,23 +278,3 @@ class Transpiler:
     #endregion
 
     #endregion
-
-if __name__ == "__main__":
-
-    pr = Program()
-
-
-    pr.block = Block([IfStatement(Variable("Hi"), Block([Assignment([Variable("Hi")], [String("Hello")])])), Assignment([Variable("Hi")], [String("Hello")])])
-    pr.block = Block([FunctionDef("SampleFunction", pr.block, [Variable("Fucker"), Variable("sucker")])])
-    pr.block = Block([ClassDef("SampleClass", pr.block)])
-    pr.block = Block([Import([Variable("Hlloe.world")])])
-
-    with open("../../tests/helloworld.print", 'r', encoding='utf8') as f:
-        code = f.read()
-
-    tokenizer = Tokenizer(code)
-    parser = Parser(tokenizer.tokenize())
-
-    trans = Transpiler(parser.parse_program())
-    print("------------------------------------ RESULT ------------------------------------")
-    print(trans.transpile_program()[0])

@@ -618,18 +618,3 @@ class Parser:
     #endregion
 
     #endregion
-"""
-code = open("../tests/helloworld.print", 'r', encoding='utf8').read()
-
-tokens = Tokenizer(code).tokenize()
-
-#print("TOKENS:")
-#print(tokens)
-
-parser = Parser(tokens)
-
-ast = parser.parse_program()
-
-print("\nAST:")
-print(ast.block.nodes)
-"""

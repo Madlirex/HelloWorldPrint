@@ -230,10 +230,3 @@ class Tokenizer:
             self.tokens.pop()
 
         return Token(TokenType.STRING, value)
-
-print(__name__)
-if __name__ == "__main__":
-    data = open("../../tests/helloworld.print", 'r', encoding='utf-8').read()
-    tokenizer = Tokenizer(data)
-    for token in tokenizer.tokenize():
-        print(token)
