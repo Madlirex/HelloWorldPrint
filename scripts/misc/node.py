@@ -1,6 +1,12 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from scripts.transpiling.itranspiler import ITranspiler
+
 class Node:
 
-    def accept(self, visitor):
+    def accept(self, visitor: ITranspiler):
         raise NotImplementedError
 
 class Block(Node):
@@ -8,8 +14,8 @@ class Block(Node):
     def __init__(self, nodes: list[Node] = None) -> None:
         self.nodes: list[Node] = nodes or []
 
-    def accept(self, visitor):
-        visitor.visit_assignment(self)
+    def accept(self, visitor: ITranspiler):
+        visitor.visit_block(self)
 
 class Variable(Node):
 
@@ -200,7 +206,7 @@ class Boolean(Node):
         self.value: bool = value
 
     def accept(self, visitor):
-        return visitor.visit_boolean(self)
+        return visitor.visit_bool(self)
 
 class NoneNode(Node):
     def accept(self, visitor):

@@ -1,5 +1,9 @@
-from scripts.misc.node import *
+from __future__ import annotations
+from typing import TYPE_CHECKING
 from abc import ABC, abstractmethod
+
+if TYPE_CHECKING:
+    from scripts.misc.node import *
 
 
 class ITranspiler(ABC):
