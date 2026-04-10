@@ -84,7 +84,7 @@ class Return(Node):
 
 class FunctionDef(Node):
 
-    def __init__(self, name: str, body: Block, params: list[Node] = Node) -> None:
+    def __init__(self, name: str, body: Block, params: list[Node] = None) -> None:
         self.name: str = name
         self.params: list[Node] = params or []
         self.body: Block = body

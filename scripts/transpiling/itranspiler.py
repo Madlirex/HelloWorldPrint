@@ -1,4 +1,4 @@
-from node import *
+from scripts.misc.node import *
 from abc import ABC, abstractmethod
 
 

@@ -1,5 +1,5 @@
 from scripts.misc.constants import KEYWORDS_LIST, SWAPPED_KEYWORDS, BRACKET_PAIRS
-from token import TokenType, Token
+from scripts.tokenizing.token import TokenType, Token
 from scripts.misc.node import *
 
 
@@ -169,12 +169,12 @@ class Parser:
 
         return program
 
-    def parse_tokens(self, tokens: list[Token]) -> Node | None:
+    def parse_tokens(self, tokens: list[Token]) -> Node:
         if len(tokens) == 1:
             return self.parse_single_token(tokens[0])
 
         if len(tokens) == 0:
-            return None
+            raise Exception(f"Empty tokens to parse.")
 
         if tokens[-1].token_type.is_bracket:
             if tokens[-2].token_type == TokenType.COMMA or tokens[-2].token_type == TokenType.COLON:

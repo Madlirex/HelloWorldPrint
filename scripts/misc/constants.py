@@ -1,4 +1,4 @@
-from token import TokenType
+from scripts.tokenizing.token import TokenType
 
 #region Keywords
 
