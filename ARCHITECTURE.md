@@ -15,12 +15,24 @@ I didn't watch any tutorials, videos, didn't see no documentation or threads, fo
 
 ## Tokenizing
 
-First thing that happens to any .print file when its read is tokenization.
+First thing that happens to any .print file when its read is tokenization.  
+Tokenization is a process of converting words and phrases into tokens which the parser can understand.
+There are many types of tokens, you can find the list in the [Token class](scripts/tokenizing/token.py). I won't list them here since the TokenType class is basically just a list of them.
 
-Based off of rules (aka if statements) written in the [Tokenizer class](scripts/tokenizing/tokenizer.py) the tokenizer does different things depending on the current character it's on.  
-Here is an extensive list of all these things, have fun reading.
+Based off of rules (aka if statements) written in the [Tokenizer class](scripts/tokenizing/tokenizer.py) the tokenizer does different things depending on the current character it's on. 
+It adds all tokens it generates into a list and then returns it.
+Here is an extensive list of all these things based off of the current character the tokenizer is on, have fun reading.
 
-### 3
+### New Line (\n)
+Adds a Token of type NEWLINE and a Token of type INDENT with an integer value, which represents how many spaces are there (the indent).
+
+### Space
+Goes to the next character.
+
+### Digit
+Reads the number until it runs into a non-numerical character (except a dot) and adds it to the list.
+
+### 
 
 ## Parsing
 
