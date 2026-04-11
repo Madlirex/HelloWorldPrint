@@ -169,12 +169,12 @@ class Parser:
 
         return program
 
-    def parse_tokens(self, tokens: list[Token]) -> Node:
+    def parse_tokens(self, tokens: list[Token]) -> Node | None:
         if len(tokens) == 1:
             return self.parse_single_token(tokens[0])
 
         if len(tokens) == 0:
-            raise Exception(f"Empty tokens to parse.")
+            return None
 
         if tokens[-1].token_type.is_bracket:
             if tokens[-2].token_type == TokenType.COMMA or tokens[-2].token_type == TokenType.COLON:

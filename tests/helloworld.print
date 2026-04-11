@@ -1,2 +1,4 @@
-- 3 = meno
-- 3.4 = x
+importuj tkinter
+(tkinter.Tk) = root
+
+(root.mainloop) = r

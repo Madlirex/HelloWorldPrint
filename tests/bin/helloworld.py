@@ -1,2 +1,3 @@
-meno = 0 - 3
-x = 0 - 3.4
+import tkinter
+root = tkinter.Tk()
+r = root.mainloop()
