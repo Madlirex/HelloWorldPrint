@@ -1,5 +1,1 @@
-meno = input("Ako sa volas ")
-print(f"dobre meno {meno}")
-vek = input("A co vek? ")
-vek = input("A co vek? ")
-vek = input("A co vek? ")
+meno = 3

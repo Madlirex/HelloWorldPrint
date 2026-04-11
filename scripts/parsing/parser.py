@@ -423,6 +423,12 @@ class Parser:
 
     def parse_single_token(self, token: Token) -> Node:
 
+        if token.token_type == TokenType.NUMBER and not isinstance(token.value, str):
+            return Number(token.value)
+
+        if not isinstance(token.value, str):
+            raise Exception(f"Unexpected tokens: {token}")
+
         if self.check_words([token], *SWAPPED_KEYWORDS['None']):
             return NoneNode()
         if self.check_words([token], *SWAPPED_KEYWORDS['True']):
@@ -432,8 +438,7 @@ class Parser:
 
         if token.token_type == TokenType.STRING:
             return String(token.value)
-        if token.token_type == TokenType.NUMBER:
-            return Number(token.value)
+
         if token.token_type == TokenType.VALUE:
             return Variable(token.value)
 
@@ -441,6 +446,8 @@ class Parser:
 
     def parse_list_type(self, values: list[Token]) -> Node:
         bracket = values[0].value
+        if not isinstance(bracket, str):
+            raise TypeError(f"Unexpected list type: {bracket}")
         if bracket in "{}":
             return self.parse_braces(values)
         if bracket in "[]":
