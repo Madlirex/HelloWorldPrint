@@ -190,6 +190,10 @@ class Parser:
         if tokens[1].token_type == TokenType.OPERATOR:
             return self.parse_operator(tokens)
 
+        if tokens[0].token_type == TokenType.OPERATOR:
+            tokens.insert(0, Token(TokenType.NUMBER, 0))
+            return self.parse_operator(tokens)
+
         return self.parse_logical_operator(tokens)
 
     def parse_line(self, line: list[Token]) -> Node:
