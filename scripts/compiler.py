@@ -103,10 +103,13 @@ class Compiler:
             Compiler.print_invalid_path(path, "py")
 
 
-def main() -> None:
-    file = input("Path to root .print file: ")
+def compile_print(file: str) -> None:
     Compiler.load_file(file)
     Compiler.run_code(Compiler.get_directory(file) + "bin/" + Compiler.get_basename(file) + ".py")
+
+def main() -> None:
+    file = input("Path to root .print file: ")
+    compile_print(file)
 
 if __name__ == "__main__":
     main()
