@@ -1,4 +1,3 @@
-importuj tkinter
-(tkinter.Tk) = root
-
-(root.mainloop) = r
+z tkinter importuj Tk ako kokot
+(kokot) = root
+(root.mainloop)

@@ -1,3 +1,3 @@
-import tkinter
-root = tkinter.Tk()
-r = root.mainloop()
+from tkinter import Tk as kokot
+root = kokot()
+root.mainloop()
