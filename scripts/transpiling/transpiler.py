@@ -50,7 +50,6 @@ class Transpiler(ITranspiler):
         # noinspection PyArgumentList
         with self.indented():
             for stmt in node.nodes:
-                print(type(stmt))
                 result += self.emit(self.transpile(stmt) + "\n")
 
         return result

@@ -1,1 +1,3 @@
-print("hi")
+def foo():
+    print("AHoj")
+
