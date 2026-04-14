@@ -163,7 +163,11 @@ class Parser:
 
     #region Basics
 
-    def parse_program(self) -> Program:
+    def parse_program(self, tokens: list[Token] = None) -> Program:
+
+        self.tokens = tokens or self.tokens
+        self.pos: int = 0
+        self.expected_indent: int = -4
 
         program = Program(self.parse_block())
 
