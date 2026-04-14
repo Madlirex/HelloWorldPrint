@@ -1,115 +1,113 @@
+import subprocess
+import sys
+
 from scripts.transpiling.transpiler import Transpiler
 from scripts.parsing.parser import Parser
 from scripts.tokenizing.tokenizer import Tokenizer
-import subprocess
-import sys
-import os
-
+from pathlib import Path
 
 class Compiler:
 
     ENCODING = "utf-8"
 
-    @staticmethod
-    def load_file(path: str) -> None:
-        file = Compiler.file_with_extension_exists(path, "print")
-        if file:
-            Compiler.compile_code(file)
-        else:
-            Compiler.print_invalid_path(path, "print")
+    def __init__(self, tokenizer: Tokenizer, parser: Parser, transpiler: Transpiler) -> None:
+        self.tokenizer = tokenizer
+        self.parser = parser
+        self.transpiler = transpiler
 
-    @staticmethod
-    def compile_code(path: str, root: str = None) -> None:
-        if not path:
+        self.src_root: Path = Path("")
+        self.bin_root: Path = Path("")
+
+    def compile(self, path: str) -> None:
+
+        self.src_root = Path(path)
+        self.src_root = self.src_root.resolve(False)
+        self.src_root = self.src_root.with_suffix(".print")
+
+        file = self.src_root.name
+
+        self.src_root = self.src_root.parent
+
+        self.bin_root = self.src_root / "bin"
+
+        if not self.check_file(self.src_root / file):
             return
 
-        if not os.path.exists(path):
+        self.compile_file(self.src_root / file)
+        self.run_code((self.bin_root / file).with_suffix(".py"))
+
+    def compile_file(self, path: Path) -> None:
+
+        print(path)
+        print(self.src_root)
+
+        if not self.check_file(path):
             return
 
-        with open(path, encoding=Compiler.ENCODING) as f:
-            code = f.read()
-            tokenizer = Tokenizer(code)
-            tokens = tokenizer.tokenize()
-            parser = Parser(tokens)
-            ast = parser.parse_program()
-            trans = Transpiler(ast)
-            compiled_code, modules = trans.transpile_program()
+        with path.open("r", encoding=Compiler.ENCODING) as f:
+            data: str = f.read()
 
-        name = Compiler.get_basename(path) + ".py"
-        root = Compiler.get_directory(path) if not root else root
-        files = Compiler.convert_modules_to_paths(modules)
-        for f in files:
-            Compiler.compile_code(root + f + ".print", root)
+        tokens = self.tokenizer.tokenize(data)
+        ast = self.parser.parse_program(tokens)
+        compiled_code, files = self.transpiler.transpile_program(ast)
 
-        folder = Compiler.get_bin_directory(path, root)
-        Compiler.create_dir(folder)
-        Compiler.create_file(folder + name)
-        with open(folder + name, 'w', encoding=Compiler.ENCODING) as f:
+        path = self.get_bin_path(path).with_suffix(".py")
+        self.ensure_dir(path.parent)
+
+        with path.open("w", encoding=Compiler.ENCODING) as f:
             f.write(compiled_code)
 
-    @staticmethod
-    def convert_modules_to_paths(modules: list[str]) -> list[str]:
-        return [Compiler.convert_module_to_path(module) for module in modules]
+        for file in files:
+            p = self.src_root / Path(*file.split(".")).with_suffix(".print")
+            self.compile_file(p)
 
-    @staticmethod
-    def convert_module_to_path(module: str) -> str:
-        return module.replace(".", "/")
+    def check_file(self, path: Path) -> bool:
+        if not path.exists():
+            print(f"Invalid path {path} to file.")
+            return False
+        return True
 
-    @staticmethod
-    def create_file(path: str) -> None:
-        if not os.path.exists(path):
-            open(path, 'x', encoding=Compiler.ENCODING).close()
+    def convert_str_to_path(self, *path: str) -> Path:
+        p = Path(*path)
+        p = p.resolve(False)
 
-    @staticmethod
-    def create_dir(path: str) -> None:
-        if not os.path.exists(path):
-            os.mkdir(path)
+        return p
 
-    @staticmethod
-    def get_basename(path: str) -> str:
-        name = os.path.basename(path)
-        return os.path.splitext(name)[0]
+    def get_bin_path(self, path: Path) -> Path:
+        return self.bin_root / path.relative_to(self.src_root)
 
-    @staticmethod
-    def get_bin_directory(path: str, root: str) -> str:
-        return root + "bin/" + Compiler.get_directory(path).removeprefix(root)
+    def ensure_dir(self, path: Path) -> None:
+        if path.exists() and not path.is_dir():
+            raise ValueError(f"{path} exists and is not a directory")
+        path.mkdir(parents=True, exist_ok=True)
 
-    @staticmethod
-    def get_directory(path: str) -> str:
-        return path.removesuffix(os.path.basename(path))
+    def run_code(self, path: Path) -> None:
+        path = path.with_suffix(".py")
 
-    @staticmethod
-    def file_with_extension_exists(path: str, extension: str) -> str | None:
-        extension = Compiler.format_extension(extension)
-        if not path.endswith(extension):
-            path += extension
-        return path if os.path.exists(path) else None
+        if not self.check_file(path):
+            return
 
-    @staticmethod
-    def format_extension(extension: str) -> str:
-        return extension if extension.startswith(".") else f".{extension}"
+        print("----------------------- RESULT -----------------------")
+        print(path)
 
-    @staticmethod
-    def print_invalid_path(path: str, extension: str) -> None:
-        extension = Compiler.format_extension(extension)
-        print(f"Invalid path {path} to {extension} file.")
-
-    @staticmethod
-    def run_code(path: str) -> None:
-        file = Compiler.file_with_extension_exists(path, "py")
-        if file:
-            subprocess.run([sys.executable, file])
+        if getattr(sys, 'frozen', False):
+            # Running inside PyInstaller
+            subprocess.run(["python", str(path)])
         else:
-            Compiler.print_invalid_path(path, "py")
+            subprocess.run([sys.executable, str(path)])
+
+        print("RAN")
 
 
-def compile_print(file: str) -> None:
-    Compiler.load_file(file)
-    Compiler.run_code(Compiler.get_directory(file) + "bin/" + Compiler.get_basename(file) + ".py")
+def compile_print(path: str) -> None:
+    tokenizer = Tokenizer()
+    parser = Parser()
+    transpiler = Transpiler()
+    compiler = Compiler(tokenizer, parser, transpiler)
+    compiler.compile(path)
 
 def main() -> None:
-    file = input("Path to root .print file: ")
-    compile_print(file)
+    compile_print(input("Enter path to .print file: "))
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
