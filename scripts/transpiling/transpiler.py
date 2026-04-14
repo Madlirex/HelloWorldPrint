@@ -15,7 +15,13 @@ class Transpiler(ITranspiler):
         self.indent_size: int = 4
         self.files: list[str] = []
 
-    def transpile_program(self) -> tuple[str, list[str]]:
+    def transpile_program(self, ast: Program = None) -> tuple[str, list[str]]:
+        self.ast: Program = ast or self.ast
+        self.pos: int = 0
+        self.indent: int = 0
+        self.indent_size: int = 4
+        self.files: list[str] = []
+
         result = ""
         for line in self.ast.block.nodes:
             result += f"{self.transpile(line)}\n"
