@@ -4,8 +4,8 @@ from scripts.misc.constants import BRACKETS, BRACKET_PAIRS, OPERATORS
 
 class Tokenizer:
 
-    def __init__(self, code: str) -> None:
-        self.code: str = code
+    def __init__(self) -> None:
+        self.code: str = ""
         self.pos: int = 0
         self.tokens: list[Token] = []
         self.curr_quotes: str = ''
@@ -38,7 +38,14 @@ class Tokenizer:
             if token.token_type == TokenType.INDENT:
                 token.value = max_indent - token.value
 
-    def tokenize(self) -> list[Token]:
+    def tokenize(self, code: str) -> list[Token]:
+
+        self.code: str = code
+        self.pos: int = 0
+        self.tokens: list[Token] = []
+        self.curr_quotes: str = ''
+        self.open_brackets: list[str] = []
+        self.curr_indent: int = 0
 
         self.tokens.append(Token(TokenType.NEWLINE, '\n'))
         self.tokens.append(self.read_indent())

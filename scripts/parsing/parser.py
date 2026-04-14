@@ -6,8 +6,8 @@ from scripts.misc.node import *
 # noinspection PyShadowingNames
 class Parser:
 
-    def __init__(self, tokenized_code: list[Token]) -> None:
-        self.tokens: list[Token] = tokenized_code
+    def __init__(self) -> None:
+        self.tokens: list[Token] = []
         self.pos: int = 0
         self.expected_indent: int = -4
 
@@ -163,9 +163,9 @@ class Parser:
 
     #region Basics
 
-    def parse_program(self, tokens: list[Token] = None) -> Program:
+    def parse_program(self, tokens: list[Token]) -> Program:
 
-        self.tokens = tokens or self.tokens
+        self.tokens = tokens
         self.pos: int = 0
         self.expected_indent: int = -4
 
