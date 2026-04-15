@@ -1,5 +1,6 @@
 import subprocess
 import sys
+import time
 
 from scripts.transpiling.transpiler import Transpiler
 from scripts.parsing.parser import Parser
@@ -20,6 +21,10 @@ class Compiler:
 
     def compile(self, path: str) -> None:
 
+        start_time = time.time()
+
+        print("Compiling...")
+
         self.src_root = Path(path)
         self.src_root = self.src_root.resolve(False)
         self.src_root = self.src_root.with_suffix(".print")
@@ -34,12 +39,12 @@ class Compiler:
             return
 
         self.compile_file(self.src_root / file)
+
+        print(f"Compilation finished, time elapsed: {(time.time() - start_time):.3g}s")
+
         self.run_code((self.bin_root / file).with_suffix(".py"))
 
     def compile_file(self, path: Path) -> None:
-
-        print(path)
-        print(self.src_root)
 
         if not self.check_file(path):
             return
@@ -47,11 +52,25 @@ class Compiler:
         with path.open("r", encoding=Compiler.ENCODING) as f:
             data: str = f.read()
 
+        start_time = time.time()
+        print("Tokenizing...")
         tokens = self.tokenizer.tokenize(data)
+        print(f"Tokenization finished, time elapsed: {(time.time() - start_time):.3g}s")
+
+        start_time = time.time()
+        print("Parsing...")
         ast = self.parser.parse_program(tokens)
+        print(f"Parsing finished, time elapsed: {(time.time() - start_time):.3g}s")
+
+        start_time = time.time()
+        print("Transpiling...")
         compiled_code, files = self.transpiler.transpile_program(ast)
+        print(f"Transpilation finished, time elapsed: {(time.time() - start_time):.3g}s")
 
         path = self.get_bin_path(path).with_suffix(".py")
+
+        print(f"Imported files discovered: {", ".join(files)}")
+
         self.ensure_dir(path.parent)
 
         with path.open("w", encoding=Compiler.ENCODING) as f:
@@ -88,15 +107,12 @@ class Compiler:
             return
 
         print("----------------------- RESULT -----------------------")
-        print(path)
 
         if getattr(sys, 'frozen', False):
             # Running inside PyInstaller
             subprocess.run(["python", str(path)])
         else:
             subprocess.run([sys.executable, str(path)])
-
-        print("RAN")
 
 
 def compile_print(path: str) -> None:

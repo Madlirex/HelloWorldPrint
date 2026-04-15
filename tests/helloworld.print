@@ -1,3 +1,8 @@
-z more importuj test
+importuj tkinter ako tk
 
-(test.foo)
+(tk.Tk) = root
+
+"Ahoj" = root.title
+"600x600"(root.geometry)
+
+(root.mainloop)
