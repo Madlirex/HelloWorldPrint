@@ -17,4 +17,4 @@ for new_name, old_name in RENAMES.items():
 
     globals()[new_name] = original
 
-    globals()[old_name] = _make_blocked(old_name, new_name)\n"""
+    globals()[old_name] = _make_blocked(old_name, new_name)\n\n"""

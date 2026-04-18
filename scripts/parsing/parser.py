@@ -525,7 +525,6 @@ class Parser:
 
     def parse_list_type(self, values: list[Token]) -> Node:
         bracket = values[0].value
-        print(values)
         if not isinstance(bracket, str):
             raise TypeError(f"Unexpected list type: {bracket}")
         if bracket in "{}":
