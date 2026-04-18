@@ -179,7 +179,6 @@ class Parser:
 
         if len(tokens) == 0:
             return None
-        print(tokens)
 
         if tokens[-1].token_type.is_bracket:
             if (tokens[-2].token_type == TokenType.COMMA) or tokens[-1].value not in "])" :
@@ -580,7 +579,6 @@ class Parser:
 
             if len(open_brackets) == 0:
                 if token.value == sep:
-                    print(token_buffer)
                     token_buffer.pop()
                     result.append(self.parse_tokens(token_buffer))
                     token_buffer = []
