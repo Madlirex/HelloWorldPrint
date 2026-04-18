@@ -181,8 +181,11 @@ class Parser:
             return None
 
         if tokens[-1].token_type.is_bracket:
-            if tokens[-2].token_type == TokenType.COMMA or tokens[-2].token_type == TokenType.COLON:
+            print(tokens)
+            if (tokens[-2].token_type == TokenType.COMMA or tokens[-2].token_type == TokenType.COLON) or tokens[-1].value not in "])" :
                 return self.parse_list_type(tokens)
+            if tokens[-1].value == "]":
+                return self.parse_index(tokens)
             return self.parse_function(tokens)
 
         if tokens[1].token_type == TokenType.DOT:
@@ -313,6 +316,16 @@ class Parser:
         left = self.parse_single_token(tokens[0])
         right = self.parse_single_token(tokens[2])
         return Operation(left, right, tokens[1].value)
+
+    def parse_index(self, tokens: list[Token]) -> Index:
+
+        start = 1
+        for i in range(1, len(tokens)):
+            if tokens[i].value == "[":
+                start = i
+                break
+
+        return Index(self.parse_tokens(tokens[:start]), self.parse_tokens(tokens[start+1:-1]))
 
     #endregion
 
@@ -454,14 +467,15 @@ class Parser:
 
     def parse_list_type(self, values: list[Token]) -> Node:
         bracket = values[0].value
+        print(values)
         if not isinstance(bracket, str):
             raise TypeError(f"Unexpected list type: {bracket}")
         if bracket in "{}":
-            return self.parse_braces(values)
+            return self.parse_braces(values[1:-1])
         if bracket in "[]":
-            return ListNode(self.parse_token_list(values))
+            return ListNode(self.parse_token_list(values[1:-1]))
         if bracket in "()":
-            return TupleNode(self.parse_token_list(values))
+            return TupleNode(self.parse_token_list(values[1:-1]))
 
         raise NotImplementedError("Not implemented list type")
 
@@ -487,6 +501,7 @@ class Parser:
 
             if len(open_brackets) == 0:
                 if token.value == sep:
+                    print(token_buffer)
                     token_buffer.pop()
                     result.append(self.parse_tokens(token_buffer))
                     token_buffer = []
