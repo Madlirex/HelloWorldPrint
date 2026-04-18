@@ -166,7 +166,7 @@ class Transpiler(ITranspiler):
 
         try:
             for i in range(len(node.keys)):
-                result += f"{node.keys[i]}: {node.values[i]}, "
+                result += f"{self.transpile(node.keys[i])}: {self.transpile(node.values[i])}, "
         except IndexError:
             raise ValueError(f"Not enough values to unpack from dictionary. There are more keys than values.")
 

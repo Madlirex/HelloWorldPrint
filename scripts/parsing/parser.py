@@ -181,7 +181,6 @@ class Parser:
             return None
 
         if tokens[-1].token_type.is_bracket:
-            print(tokens)
             if (tokens[-2].token_type == TokenType.COMMA or tokens[-2].token_type == TokenType.COLON) or tokens[-1].value not in "])" :
                 return self.parse_list_type(tokens)
             if tokens[-1].value == "]":
@@ -480,7 +479,29 @@ class Parser:
         raise NotImplementedError("Not implemented list type")
 
     def parse_braces(self, tokens: list[Token]) -> Node:
-        pass
+
+        open_brackets = 0
+        last = 0
+
+        values = []
+        keys = []
+        for i in range(len(tokens)):
+            if tokens[i].token_type.is_opening_bracket:
+                open_brackets += 1
+            if tokens[i].value in "]})":
+                open_brackets -= 1
+
+            if tokens[i].value == ":" and open_brackets == 0:
+                keys.append(self.parse_tokens(tokens[last:i]))
+                last = i + 1
+            if tokens[i].value == "," and len(keys) > 0 and open_brackets == 0:
+                values.append(self.parse_tokens(tokens[last:i]))
+                last = i + 1
+
+        if len(keys) > 0:
+            values.append(self.parse_tokens(tokens[last:]))
+            return DictionaryNode(keys, values)
+        return SetNode(self.parse_token_list(tokens))
 
     def parse_token_list(self, values: list[Token], sep: str = ",") -> list[Node]:
 
