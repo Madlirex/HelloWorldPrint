@@ -72,7 +72,7 @@ class Tokenizer:
                 self.tokens.append(self.read_number())
                 continue
 
-            if char.isalpha() or char == "_" or char == "?":
+            if char.isalpha() or char == "_" or char == "@":
                 self.tokens.append(self.read_identifier())
                 continue
 
@@ -203,9 +203,9 @@ class Tokenizer:
 
         name = ""
 
-        while self.peek() and (self.peek().isalnum() or self.peek() == "_" or self.peek() == "?"):
+        while self.peek() and (self.peek().isalnum() or self.peek() == "_" or self.peek() == "@"):
             char = self.advance()
-            name += "*" if char == "?" else char
+            name += "*" if char == "@" else char
 
         return Token(TokenType.VALUE, name)
 
