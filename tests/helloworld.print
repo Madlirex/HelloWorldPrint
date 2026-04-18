@@ -1,2 +1,5 @@
-("hello", "jo",) = dictionary
-dictionary[0](print)
+    definuj funkcia(?args).
+args[0](print)
+
+    ('abs', 'tits',) = tup
+    ?tup(funkcia)
