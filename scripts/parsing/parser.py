@@ -179,11 +179,23 @@ class Parser:
 
         if len(tokens) == 0:
             return None
+        print(tokens)
 
         if tokens[-1].token_type.is_bracket:
-            if (tokens[-2].token_type == TokenType.COMMA or tokens[-2].token_type == TokenType.COLON) or tokens[-1].value not in "])" :
+            if (tokens[-2].token_type == TokenType.COMMA) or tokens[-1].value not in "])" :
                 return self.parse_list_type(tokens)
             if tokens[-1].value == "]":
+                open_brackets = 0
+                for i in range(1, len(tokens)):
+                    if isinstance(tokens[i].value, str):
+                        if tokens[i].token_type.is_opening_bracket:
+                            open_brackets += 1
+                        if tokens[i].value in "}])":
+                            open_brackets -= 1
+
+                    if tokens[i].token_type == TokenType.COLON:
+                        return self.parse_slice(tokens)
+
                 return self.parse_index(tokens)
             return self.parse_function(tokens)
 
@@ -319,12 +331,59 @@ class Parser:
     def parse_index(self, tokens: list[Token]) -> Index:
 
         start = 1
+        open_brackets = 0
         for i in range(1, len(tokens)):
-            if tokens[i].value == "[":
+            if isinstance(tokens[i].value, str):
+                if tokens[i].value in "{(":
+                    open_brackets += 1
+                if tokens[i].value in "})":
+                    open_brackets -= 1
+
+            if tokens[i].value == "[" and open_brackets == 0:
                 start = i
                 break
 
         return Index(self.parse_tokens(tokens[:start]), self.parse_tokens(tokens[start+1:-1]))
+
+    def parse_slice(self, tokens: list[Token]) -> Slice:
+
+        open_brackets = 0
+        x = 1
+
+        for i in range(1, len(tokens)):
+            if isinstance(tokens[i].value, str):
+                if tokens[i].value in "{(":
+                    open_brackets += 1
+                if tokens[i].value in "})":
+                    open_brackets -= 1
+
+            if tokens[i].value == "[" and open_brackets == 0:
+                x = i
+                break
+        open_brackets = 0
+
+        first = 0
+        second = 0
+
+        for i in range(x + 1, len(tokens)):
+            if isinstance(tokens[i].value, str):
+
+                if tokens[i].value in "{(":
+                    open_brackets += 1
+                if tokens[i].value in "})":
+                    open_brackets -= 1
+
+            if tokens[i].value == ":" and open_brackets == 0:
+                if first == 0:
+                    first = i
+                elif second == 0:
+                    second = i
+
+        start = self.parse_tokens(tokens[x+1:first])
+        end = self.parse_tokens(tokens[first+1:second]) if second != 0 else None
+        step = self.parse_tokens(tokens[second+1:-1]) if len(tokens[second+1:-1]) > 0 and second > 0 else None
+
+        return Slice(self.parse_tokens(tokens[:x]), start, end, step)
 
     #endregion
 

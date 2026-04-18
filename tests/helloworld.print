@@ -1,2 +1,2 @@
-{"hi", "mama"} = hoax
-hoax(print)
+["hi", "mama", "dada",] = family
+family[1:](print)
