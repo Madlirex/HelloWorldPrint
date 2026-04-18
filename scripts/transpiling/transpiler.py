@@ -155,7 +155,7 @@ class Transpiler(ITranspiler):
         return f"[{self.transpile_nodes(node.values)}]"
 
     def visit_tuple(self, node: TupleNode) -> str:
-        return f"({self.transpile_nodes(node.values)},)"
+        return f"({self.transpile_nodes(node.values)})"
 
     def visit_set(self, node: SetNode) -> str:
         return "{" + self.transpile_nodes(node.values) + "}"

@@ -1,2 +1,2 @@
-{"hello", "jo",} = dictionary
+("hello", "jo",) = dictionary
 dictionary[0](print)

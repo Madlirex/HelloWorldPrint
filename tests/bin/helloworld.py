@@ -1,2 +1,2 @@
-dictionary = 
+dictionary = ("hello", "jo", )
 print(dictionary[0])
