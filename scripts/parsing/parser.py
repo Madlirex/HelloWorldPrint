@@ -180,6 +180,9 @@ class Parser:
         if len(tokens) == 0:
             return None
 
+        if tokens[1].token_type == TokenType.EQUAL:
+            return self.parse_keyarg(tokens)
+
         if tokens[-1].token_type.is_bracket:
             if (tokens[-2].token_type == TokenType.COMMA) or tokens[-1].value not in "])" :
                 return self.parse_list_type(tokens)
@@ -297,8 +300,8 @@ class Parser:
         for i in reversed(range(len(tokens))):
             if tokens[i].token_type == TokenType.EQUAL_OPERATOR or tokens[i].token_type == TokenType.EQUAL:
                 op = tokens[i].value
-                left = self.parse_token_list(tokens[0:i], ";")
-                right = self.parse_token_list(tokens[i+1:], ";")
+                left = self.parse_token_list(tokens[0:i], ",")
+                right = self.parse_token_list(tokens[i+1:], ",")
                 break
 
         return Assignment(right, left, op)
@@ -313,7 +316,7 @@ class Parser:
         end = -1
 
         name = self.parse_tokens(tokens[start:end])
-        args = self.parse_token_list(tokens[:start-1:], ",")
+        args = self.parse_token_list(tokens[:start-1:], ";")
 
         return Call(name, args)
 
@@ -331,7 +334,7 @@ class Parser:
 
         start = 1
         open_brackets = 0
-        for i in range(1, len(tokens)):
+        for i in reversed(range(1, len(tokens))):
             if isinstance(tokens[i].value, str):
                 if tokens[i].value in "{(":
                     open_brackets += 1
@@ -343,6 +346,10 @@ class Parser:
                 break
 
         return Index(self.parse_tokens(tokens[:start]), self.parse_tokens(tokens[start+1:-1]))
+
+    def parse_keyarg(self, tokens: list[Token]) -> KeyArg:
+
+        return KeyArg(self.parse_single_token(tokens[0]), self.parse_tokens(tokens[2:]))
 
     def parse_slice(self, tokens: list[Token]) -> Slice:
 
