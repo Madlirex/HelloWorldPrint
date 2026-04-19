@@ -201,7 +201,7 @@ class Parser:
                 return self.parse_index(tokens)
             return self.parse_function(tokens)
 
-        if tokens[1].token_type == TokenType.DOT:
+        if tokens[-2].token_type == TokenType.DOT:
             return self.parse_attribute(tokens)
 
         if tokens[1].token_type == TokenType.COMMA:
