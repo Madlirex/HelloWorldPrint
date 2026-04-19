@@ -25,9 +25,18 @@ class Application():
         self.root = tk.Tk()
         self.root.title("Tic Tac Toe")
         self.root.geometry("600x600")
-        list_butonov = (((tk.Button(self.root, text = "Hello World"), ), ), ), 
-        buton = list_butonov[0][0][0][0]
-        buton.pack()
+        self.buttons = []
+        for i in rozsah(3):
+            self.buttons.append([])
+            for j in rozsah(3):
+                self.buttons[i].append(tk.Button(self.root))
+                self.buttons[i][j].grid(row = i, column = j)
+            else:
+                pass
+
+        else:
+            pass
+
         self.update()
 
     def update(self):

@@ -29,7 +29,7 @@ class Transpiler(ITranspiler):
         return result, self.files
 
     def transpile_nodes(self, nodes: list[Node] | tuple[Node, ...]) -> str:
-        return ", ".join(self.transpile(node) for node in nodes)
+        return ", ".join(self.transpile(node) for node in nodes if node)
 
     def transpile(self, node: Node) -> str:
         return node.accept(self) if node else ""
