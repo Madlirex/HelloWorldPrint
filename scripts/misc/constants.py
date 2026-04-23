@@ -52,30 +52,6 @@ SWAPPED_KEYWORDS: dict[str, tuple[str, ...]] = {
 
 KEYWORDS_LIST = sorted(KEYWORDS.items(), key=lambda x: -len(x[0]))
 
-
-KEYWORD_FUNCTIONS = {
-    ('if',): "parse_if",
-    ('while',): "parse_while",
-    ('for',): "parse_for",
-    ('class',): "parse_class",
-    ('def',): "parse_def",
-    ('try',): "parse_try",
-    ('==', '<', '>', '<=', '>=', '!='): "parse_operator",
-    ('True', 'False'): "parse_bool",
-    ('return',): "parse_return",
-    ('None',): "parse_none",
-    ('break',): "parse_break",
-    ('pass',): "parse_pas",
-    ('continue',): "parse_continue",
-    ('=',): "parse_assignment"
-}
-
-FLAT_KEYWORD_FUNCTIONS = {
-    token: value
-    for keys, value in KEYWORD_FUNCTIONS.items()
-    for token in keys
-}
-
 #endregion
 
 BRACKETS: dict[str, TokenType] = {
@@ -97,4 +73,4 @@ OPERATORS = {
     '+', '-', '*', '**', '/', '%', '//',
     '==', '!=', '<', '<=', '>', '>=',
     '&', '|', '^', '~', '<<', '>>'
-}
+}\
