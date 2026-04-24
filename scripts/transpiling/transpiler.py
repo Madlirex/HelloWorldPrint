@@ -281,6 +281,14 @@ class Transpiler(ITranspiler):
 
         return result
 
+    def visit_with(self, node: WithNode) -> str:
+
+        result = f"with {self.transpile(node.statement)}"
+        alias = f" as {self.transpile(node.alias)}" if node.alias is not None else ""
+        result = f"{result}{alias}:\n"
+        result += self.visit_block(node.body)
+        return result
+
     #endregion
 
     #endregion

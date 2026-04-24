@@ -9,7 +9,7 @@ KEYWORDS: dict[tuple[str, ...], str] = {
         ("kým", "platí", "že"): "while",
         ("pre", "každé"): "for",
         ("trieda",): "class",
-        ("definuje",): "def",
+        ("definuj",): "def",
         ("skús",): "try",
         ("okrem",): "except",
         ("na", "koniec"): "finally",
@@ -73,4 +73,4 @@ OPERATORS = {
     '+', '-', '*', '**', '/', '%', '//',
     '==', '!=', '<', '<=', '>', '>=',
     '&', '|', '^', '~', '<<', '>>'
-}\
+}

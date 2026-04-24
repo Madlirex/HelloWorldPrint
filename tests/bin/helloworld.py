@@ -20,16 +20,17 @@ for new_name, old_name in RENAMES.items():
     globals()[old_name] = _make_blocked(old_name, new_name)
 
 import tkinter as tk
+import more.test
 class Application():
     def __init__(self):
         self.root = tk.Tk()
-        self.root.title("Tic Tac Toe")
+        self.root.title('text = TicTacToe')
         self.root.geometry("600x600")
         self.buttons = []
         for i in rozsah(3):
             self.buttons.append([])
             for j in rozsah(3):
-                self.buttons[i].append(tk.Button(self.root))
+                self.buttons[i].append(self.root, text = tk.Button("Helo world"))
                 self.buttons[i][j].grid(row = i, column = j)
             else:
                 pass

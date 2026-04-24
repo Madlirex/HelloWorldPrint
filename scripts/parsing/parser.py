@@ -249,6 +249,8 @@ class Parser:
             return self.parse_return(line)
         if kw == "yield":
             return self.parse_yield(line)
+        if kw == "with":
+            return self.parse_with(line)
 
         for tok in line[::-1]:
             if tok.token_type == TokenType.EQUAL or tok.token_type == TokenType.EQUAL_OPERATOR:
@@ -726,6 +728,21 @@ class Parser:
         aliases = self.parse_token_list(tokens[start:])
 
         return FromImport(path, modules, aliases)
+
+    def parse_with(self, tokens: list[Token]) -> WithNode:
+
+        start = self.consume_words(tokens, *SWAPPED_KEYWORDS['with'])
+        end = self.find_words(tokens, *SWAPPED_KEYWORDS['as'])
+        end = len(tokens) - 1 if end == -1 else end
+
+        if tokens[-1].token_type != TokenType.EXCLAMAITON:
+            raise SyntaxError("Invalid syntax you illiterate swine")
+
+        statement = self.parse_tokens(tokens[start:end])
+        end = len(tokens) - 1 if end == -1 else end + len(SWAPPED_KEYWORDS['as'])
+        aliases = self.parse_tokens(tokens[end:-1])
+
+        return WithNode(statement, self.parse_block(), aliases)
 
     #endregion
 

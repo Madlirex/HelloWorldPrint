@@ -203,6 +203,10 @@ class ITranspiler(ABC):
     def visit_match(self, node: MatchNode) -> str:
         pass
 
+    @abstractmethod
+    def visit_with(self, node: WithNode) -> str:
+        pass
+
     #endregion
 
     #endregion

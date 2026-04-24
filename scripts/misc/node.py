@@ -367,3 +367,13 @@ class DelNode(Node):
 
     def accept(self, visitor):
         return visitor.visit_del(self)
+
+class WithNode(Node):
+
+    def __init__(self, statement: Node, body: Block, alias: Variable = None) -> None:
+        self.statement = statement
+        self.body = body
+        self.alias = alias
+
+    def accept(self, visitor: ITranspiler):
+        return visitor.visit_with(self)
