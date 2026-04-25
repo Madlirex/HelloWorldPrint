@@ -474,7 +474,7 @@ class Parser:
         end = start + len(SWAPPED_KEYWORDS['and'])
 
         if start != -1:
-            return OrNode(self.parse_tokens(tokens[:start]), self.parse_tokens(tokens[end::]))
+            return AndNode(self.parse_tokens(tokens[:start]), self.parse_tokens(tokens[end::]))
 
         raise SyntaxError(f"Expected {SWAPPED_KEYWORDS} to be in {tokens}")
 
