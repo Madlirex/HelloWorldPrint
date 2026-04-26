@@ -62,8 +62,7 @@ class Transpiler(ITranspiler):
         return result
 
     def visit_assignment(self, node: Assignment) -> str:
-
-        return f"{self.transpile_nodes(node.left)} = {self.transpile_nodes(node.right)}"
+        return f"{self.transpile_nodes(node.left)} {node.operator} {self.transpile_nodes(node.right)}"
 
     def visit_attribute(self, node: Attribute) -> str:
         return f"{self.transpile(node.obj)}.{node.name}"
