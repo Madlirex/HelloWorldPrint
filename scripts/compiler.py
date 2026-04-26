@@ -5,7 +5,6 @@ import time
 from scripts.transpiling.transpiler import Transpiler
 from scripts.parsing.parser import Parser
 from scripts.tokenizing.tokenizer import Tokenizer
-from scripts.HEADER import HEADER
 from pathlib import Path
 
 class Compiler:
@@ -66,7 +65,6 @@ class Compiler:
         start_time = time.time()
         print("Transpiling...")
         compiled_code, files = self.transpiler.transpile_program(ast)
-        compiled_code = HEADER + compiled_code
         print(f"Transpilation finished, time elapsed: {(time.time() - start_time):.3g}s")
 
         path = self.get_bin_path(path).with_suffix(".py")

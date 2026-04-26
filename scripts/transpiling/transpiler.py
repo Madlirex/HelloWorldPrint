@@ -3,6 +3,7 @@ from scripts.tokenizing.tokenizer import Tokenizer
 from scripts.transpiling.itranspiler import ITranspiler
 from scripts.parsing.parser import Parser
 from scripts.misc.node import *
+from scripts.misc.constants import RENAMES, INVALID_RENAMES
 
 
 # noinspection PyMethodMayBeStatic
@@ -73,7 +74,13 @@ class Transpiler(ITranspiler):
             prefix = node.func.value[0] if quotes != node.func.value[0] else ""
             return f"{node.func.value[len(prefix)+1:-1]}({prefix}{quotes}{self.transpile_nodes(node.args)}{quotes})"
 
-        return f"{self.transpile(node.func)}({self.transpile_nodes(node.args)})"
+        name = self.transpile(node.func)
+        if name in RENAMES:
+            name = RENAMES[name]
+        elif name in INVALID_RENAMES:
+            raise RuntimeError(f"Use '{INVALID_RENAMES[name]}' instead of '{name}'")
+
+        return f"{name}({self.transpile_nodes(node.args)})"
 
     def visit_index(self, node: Index) -> str:
         return f"{self.transpile(node.obj)}[{self.transpile(node.index)}]"

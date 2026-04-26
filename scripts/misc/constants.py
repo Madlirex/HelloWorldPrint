@@ -74,3 +74,14 @@ OPERATORS = {
     '==', '!=', '<', '<=', '>', '>=',
     '&', '|', '^', '~', '<<', '>>'
 }
+
+RENAMES = {
+    "vytlač": "print",
+    "vtlač": "input",
+    "dĺžka": "len",
+    "rozsah": "range"
+}
+
+INVALID_RENAMES = {
+    value: key for key, value in RENAMES.items()
+}
