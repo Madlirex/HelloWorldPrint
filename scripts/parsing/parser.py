@@ -247,6 +247,8 @@ class Parser:
             return self.parse_del(line)
         if kw == "return":
             return self.parse_return(line)
+        if kw == "raise":
+            return self.parse_raise(line)
         if kw == "yield":
             return self.parse_yield(line)
         if kw == "with":
@@ -413,6 +415,14 @@ class Parser:
             raise SyntaxError("Invalid syntax you illiterate swine")
 
         return Return(self.parse_tokens(tokens[start:-1]))
+
+    def parse_raise(self, tokens: list[Token]) -> Raise:
+        start = self.match_words(tokens, *SWAPPED_KEYWORDS['raise'])
+
+        if tokens[-1].token_type != TokenType.EXCLAMAITON:
+            raise SyntaxError("Invalid syntax you illiterate swine")
+
+        return Raise(self.parse_tokens(tokens[start:-1]))
 
     def parse_yield(self, tokens: list[Token]) -> Yield:
         start = self.match_words(tokens, *SWAPPED_KEYWORDS['yield'])
