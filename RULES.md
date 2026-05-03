@@ -47,4 +47,17 @@ Nice to meet you {name}, you are {age} years old!(f"print") # f-string example
 
 ```
 > [!IMPORTANT]
-> The code in this block is only an example of the "inverted call" rule. It is not valid PRINT code due to other rules not being met.
+> The code in this block is only an example of the "inverted call" rule. It is not valid PRINT code due to other rules not being met.  
+
+## Different Keywords
+
+Keywords used in PRINT differ from Python. To see the full list of Python equivalents to PRINT Keywords see the [constants.py](scripts/misc/constants.py) file.
+
+There is a lot to it, but also a key difference is that PRINT doesn't use `:` at the end of if, else, def etc. Instead it is required to use the proper statement ending as if it was Slovak language.  
+Examples:
+```py
+definuj x().
+vráť nič!
+čo ak x sa rovná 3?
+pre každé i v x(dĺžka)(rozsah)!
+```
