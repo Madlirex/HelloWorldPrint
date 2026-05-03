@@ -390,6 +390,8 @@ class Parser:
                     second = i
 
         start = self.parse_tokens(tokens[x+1:first])
+        if second == 0 and len(tokens[first + 1:-1]) > 0:
+            second = -1
         end = self.parse_tokens(tokens[first+1:second]) if second != 0 else None
         step = self.parse_tokens(tokens[second+1:-1]) if len(tokens[second+1:-1]) > 0 and second > 0 else None
 
